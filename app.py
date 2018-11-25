@@ -42,8 +42,9 @@ async def index(request):
 async def source(request):
     return response.redirect('https://github.com/kyb3r/webserver')
 
-app.get('/<repository>', host=f'repo.{domain}')
-async def repo(request, repo):
+app.get('/', host=f'repo.{domain}')
+async def repo(request, repo='modmail'):
+    print('hello')
     return response.redirect(f'https://github.com/kyb3r/{repo}')
 
 def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
