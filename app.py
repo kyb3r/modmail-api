@@ -29,10 +29,6 @@ async def init(app, loop):
 
 app.static('/static', './static')
 
-@app.get('/')
-async def wildcard(request):
-    return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
-
 @app.get('/', host=domain)
 async def index(request):
     with open('static/index.html') as f:
