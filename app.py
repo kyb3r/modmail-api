@@ -21,14 +21,15 @@ async def init(app, loop):
     url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
 
-def production_route(*args, **kwargs): # subdomains dont exist on localhost.
-    def decorator(func):
-        return func if dev_mode else app.route(*args, **kwargs)(func)
-    return decorator
+# def production_route(*args, **kwargs): # subdomains dont exist on localhost.
+#     def decorator(func):
+#         if dev_mode
+
+#     return decorator
 
 app.static('/static', './static')
 
-@production_route('/')
+@app.get('/')
 async def wildcard(request):
     return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
 
