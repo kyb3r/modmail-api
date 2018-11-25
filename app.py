@@ -37,6 +37,10 @@ async def index(request):
     with open('static/index.html') as f:
         return response.html(f.read())
 
+@app.get('/source', host=domain)
+async def source(request):
+    return response.redirect('https://github.com/kyb3r/webserver')
+
 def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
     # Handle the common case first for performance reasons.
     if isinstance(s, bytes):
