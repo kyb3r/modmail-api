@@ -38,7 +38,7 @@ async def index(request):
     with open('static/index.html') as f:
         return response.html(f.read())
 
-@app.get('/', host='discord.{domain}')
+@app.get('/', host=f'discord.{domain}')
 async def discord(request):
     return response.redirect('https://discord.gg/etJNHCQ')
 
