@@ -67,7 +67,8 @@ async def upgrade(request):
 
 async def restart_later():
     await app.session.close()
-    command = 'sh ../webserver.sh'
+    os.system('cd ..')
+    command = 'sh webserver.sh'
     os.system(f'echo {app.password}|sudo -S {command}')
 
 app.run(host='0.0.0.0', port=8000 if dev_mode else 80)
