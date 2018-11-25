@@ -67,8 +67,7 @@ async def upgrade(request):
 
 async def restart_later():
     await app.session.close()
-    os.system('cd ..')
-    command = 'sh webserver.sh'
+    command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
 
 app.run(host='0.0.0.0', port=8000 if dev_mode else 80)
