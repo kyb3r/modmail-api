@@ -9,9 +9,13 @@ import json
 with open('config.json') as f:
     config = json.load(f)
 
+
+
 app = Sanic(__name__)
 dev_mode = bool(int(config.get('development')))
 domain = None if dev_mode else config.get('domain')
+
+print(f'repo.{domain}')
 
 @app.listener('before_server_start')
 async def init(app, loop):
