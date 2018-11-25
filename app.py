@@ -61,9 +61,9 @@ def validate_github_payload(request):
 @app.post('/hooks/github', host=domain)
 async def upgrade(request):
     if not validate_github_payload(request):
-        return text('fuck off', 401) # not sent by github
+        return response.text('fuck off', 401) # not sent by github
     app.loop.create_task(restart_later())
-    return json({'success': True})
+    return response.json({'success': True})
 
 async def restart_later():
     await app.session.close()
