@@ -5,6 +5,8 @@ import dhooks
 import hmac
 import hashlib
 
+print(os.environ)
+
 app = Sanic(__name__)
 dev_mode = bool(int(os.getenv('development')))
 domain = None if dev_mode else os.getenv('domain')
@@ -14,7 +16,8 @@ async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
     app.password = os.getenv('password')
     app.session = aiohttp.ClientSession(loop=loop)
-    app.webhook = dhooks.Webhook.Async(os.getenv('webhook_url'))
+    url = os.getenv('webhook_url')
+    app.webhook = dhooks.Webhook.Async(url)
 
 def production_route(*args, **kwargs): # subdomains dont exist on localhost.
     def decorator(func):
