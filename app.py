@@ -4,19 +4,21 @@ import aiohttp
 import dhooks
 import hmac
 import hashlib
+import json
 
-print(os.environ)
+with open('config.json') as f:
+    config = json.load(f)
 
 app = Sanic(__name__)
-dev_mode = bool(int(os.getenv('development')))
-domain = None if dev_mode else os.getenv('domain')
+dev_mode = bool(int(config.get('development')))
+domain = None if dev_mode else config.get('domain')
 
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
-    app.password = os.getenv('password')
+    app.password = config.get('password')
     app.session = aiohttp.ClientSession(loop=loop)
-    url = os.getenv('webhook_url')
+    url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
 
 def production_route(*args, **kwargs): # subdomains dont exist on localhost.
