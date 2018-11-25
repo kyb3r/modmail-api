@@ -9,13 +9,9 @@ import json
 with open('config.json') as f:
     config = json.load(f)
 
-
-
 app = Sanic(__name__)
 dev_mode = bool(int(config.get('development')))
 domain = None if dev_mode else config.get('domain')
-
-print(f'repo.{domain}')
 
 @app.listener('before_server_start')
 async def init(app, loop):
@@ -33,6 +29,10 @@ async def init(app, loop):
 
 app.static('/static', './static')
 
+@app.get('/')
+async def wildcard(request):
+    return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
+
 @app.get('/', host=domain)
 async def index(request):
     with open('static/index.html') as f:
@@ -42,10 +42,9 @@ async def index(request):
 async def source(request):
     return response.redirect('https://github.com/kyb3r/webserver')
 
-app.get('/', host=f'repo.{domain}')
-async def repo(request, x='modmail'):
-    print('hello')
-    return response.redirect(f'https://github.com/kyb3r/{x}')
+@app.get('/<repo>', host=f'repo.{domain}')
+async def repo(request, repo):
+    return response.redirect(f'https://github.com/kyb3r/{repo}')
 
 def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
     # Handle the common case first for performance reasons.
