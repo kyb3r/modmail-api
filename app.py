@@ -39,9 +39,9 @@ async def source(request):
     return response.redirect('https://github.com/kyb3r/webserver')
 
 app.get('/', host=f'repo.{domain}')
-async def repo(request, repo='modmail'):
+async def repo(request, x='modmail'):
     print('hello')
-    return response.redirect(f'https://github.com/kyb3r/{repo}')
+    return response.redirect(f'https://github.com/kyb3r/{x}')
 
 def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
     # Handle the common case first for performance reasons.
