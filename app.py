@@ -53,7 +53,7 @@ async def on_error(request, exception):
         if len(excstr) > 1000:
             excstr = excstr[:1000] 
 
-        app.add_task(core.log_server_error(excstr))
+        app.add_task(core.log_server_error(app, excstr))
     return response.text('something went wrong xd', status=500)
 
 @app.get('/', host=config.domain)
