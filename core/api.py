@@ -2,6 +2,7 @@ from sanic import Blueprint, response
 
 from .config import Config
 from .utils import validate_github_payload
+from .core import log_server_stop, log_server_update
 
 config = Config.from_json('config.json')
 domain = config.domain
@@ -23,8 +24,8 @@ async def index(request):
     return response.json({'success': True, 'message': 'hello there, this api doesnt do anything lmao'})
 
 async def restart_later(app):
-    await core.log_server_update(app)
-    await core.log_server_stop(app)
+    await log_server_update(app)
+    await log_server_stop(app)
     await app.session.close()
     command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
