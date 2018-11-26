@@ -79,7 +79,7 @@ async def init(app, loop):
     app.session = aiohttp.ClientSession(loop=loop)
     url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
-    app.webhook.avatar_url = 'https://i.imgur.com/Y2eWcqg.png'
+    app.webhook.avatar_url = 'http://icons.iconarchive.com/icons/graphicloads/100-flat/256/analytics-icon.png'
     app.webhook.username = 'kybr.tk'
     await log_server_start()
 
