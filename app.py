@@ -5,6 +5,7 @@ import dhooks
 import hmac
 import hashlib
 import json
+import socket
 
 with open('config.json') as f:
     config = json.load(f)
@@ -13,6 +14,11 @@ app = Sanic(__name__)
 dev_mode = bool(int(config.get('development')))
 domain = None if dev_mode else config.get('domain')
 
+class Color:
+    green = 0x2ecc71
+    red = 0xe74c3c
+    orange = 0xe67e22
+
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
@@ -20,6 +26,20 @@ async def init(app, loop):
     app.session = aiohttp.ClientSession(loop=loop)
     url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
+
+    em = dhooks.Embed(color=Color.green)
+    em.set_author('[INFO] Starting Worker', url='https://{domain}')
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
+
+    await app.webhook.send(embeds=em)
+
+@app.listener('after_server_stop')
+async def aexit(app, loop):
+    em = dhooks.Embed(color=Color.red)
+    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_author('[INFO] Server Stopped')
+    await app.webhook.send(embeds=em)
+    await app.session.close()
 
 # def production_route(*args, **kwargs): # subdomains dont exist on localhost.
 #     def decorator(func):
@@ -79,6 +99,10 @@ async def upgrade(request):
     return response.json({'success': True})
 
 async def restart_later():
+    em = dhooks.Embed(color=Color.orange)
+    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_author('[INFO] Server updating and restarting.')
+    await app.webhook.send(embeds=em)
     await app.session.close()
     command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
