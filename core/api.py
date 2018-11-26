@@ -2,7 +2,7 @@ from sanic import Blueprint, response
 
 from .config import Config
 from .utils import validate_github_payload
-from .core import log_server_stop, log_server_update
+from .logs import log_server_stop, log_server_update
 
 config = Config.from_json('config.json')
 domain = config.domain
