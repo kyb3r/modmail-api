@@ -7,6 +7,7 @@ name = "pypi"
 sanic = "*"
 aiohttp = "*"
 dhooks = "*"
+python-box = "*"
 
 [dev-packages]
 
