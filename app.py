@@ -93,6 +93,7 @@ async def wildcard(request):
 
 @app.get('/', host=domain)
 async def index(request):
+    b
     with open('static/index.html') as f:
         return response.html(f.read())
 
