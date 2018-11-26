@@ -15,6 +15,8 @@ with open('config.json') as f:
     config = json.load(f)
 
 app = Sanic(__name__)
+app.static('/static', './static')
+
 dev_mode = bool(int(config.get('development')))
 domain = None if dev_mode else config.get('domain')
 URL = f'https://{domain}' if domain else None
@@ -87,18 +89,6 @@ async def init(app, loop):
 async def aexit(app, loop):
     await log_server_stop()
     await app.session.close()
-
-# def production_route(*args, **kwargs): # subdomains dont exist on localhost.
-#     def decorator(func):
-#         if dev_mode
-
-#     return decorator
-
-app.static('/static', './static')
-
-# @app.get('/')
-# async def wildcard(request):
-#     return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
 
 @app.get('/', host=domain)
 async def index(request):
