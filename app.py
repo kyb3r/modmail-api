@@ -51,6 +51,7 @@ def log_server_error(excstr):
 
 @app.exception(Exception)
 async def on_error(request, exception):
+    print('hellow')
     if not isinstance(exception, SanicException):
         try:
             raise(exception)
