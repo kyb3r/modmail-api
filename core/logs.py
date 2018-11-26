@@ -10,6 +10,8 @@ def log_server_start(app):
     em = dhooks.Embed(color=Color.green)
     url = f'https://{app.cfg.domain}' if app.cfg.domain else None
     em.set_author('[INFO] Starting Worker', url=url)
+    if url:
+        em.add_field('Live at', url)
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.domain}')
     return app.webhook.send(embeds=em)
 
