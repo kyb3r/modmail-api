@@ -21,4 +21,4 @@ async def redirects(request, path):
 
 @rd.get('/<repo>', host=f'repo.{config.domain}')
 async def repo(request, repo):
-    return response.redirect(f'https://github.com/{repo}')
+    return response.redirect(f'https://github.com/kyb3r/{repo}')
