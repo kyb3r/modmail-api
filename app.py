@@ -58,6 +58,7 @@ async def on_error(request, exception):
 
 @app.get('/', host=config.domain)
 async def index(request):
+    a
     with open('static/index.html') as f:
         return response.html(f.read())
 

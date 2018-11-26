@@ -16,7 +16,8 @@ def log_server_start(app):
         cmd = cmd.format(r'\`%h\`') if os.name == 'posix' else cmd.format(r'`%h`')
         revision = os.popen(cmd).read().strip()
         em.add_field('Latest changes', revision, inline=False)
-        em.add_field('Live at', url)
+        em.add_field('Live at', url, inline=False)
+        em.add_field('Github', 'https://github.com/kyb3r/webserver')
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.domain}')
     return app.webhook.send(embeds=em)
 
