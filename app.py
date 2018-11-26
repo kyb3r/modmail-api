@@ -28,7 +28,7 @@ async def init(app, loop):
     app.webhook = dhooks.Webhook.Async(url)
 
     em = dhooks.Embed(color=Color.green)
-    em.set_author('[INFO] Starting Worker', url='https://{domain}')
+    em.set_author('[INFO] Starting Worker', url=f'https://{domain}')
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
 
     await app.webhook.send(embeds=em)
