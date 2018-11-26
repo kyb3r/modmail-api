@@ -11,7 +11,6 @@ import aiohttp
 import dhooks
 
 
-
 with open('config.json') as f:
     config = json.load(f)
 
@@ -80,6 +79,8 @@ async def init(app, loop):
     app.session = aiohttp.ClientSession(loop=loop)
     url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
+    app.webhook.avatar_url = 'https://i.imgur.com/Y2eWcqg.png'
+    app.webhook.username = 'kybr.tk'
     await log_server_start()
 
 @app.listener('after_server_stop')
@@ -101,8 +102,6 @@ app.static('/static', './static')
 
 @app.get('/', host=domain)
 async def index(request):
-    print('bob')
-    b
     with open('static/index.html') as f:
         return response.html(f.read())
 
