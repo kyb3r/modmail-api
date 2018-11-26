@@ -1,11 +1,16 @@
 import os
-from sanic import Sanic, response
-import aiohttp
-import dhooks
 import hmac
 import hashlib
 import json
 import socket
+import traceback
+
+from sanic import Sanic, response
+from sanic.exceptions import SanicException
+import aiohttp
+import dhooks
+
+
 
 with open('config.json') as f:
     config = json.load(f)
@@ -19,6 +24,47 @@ class Color:
     red = 0xe74c3c
     orange = 0xe67e22
 
+def log_server_start():
+    em = dhooks.Embed(color=Color.green)
+    em.set_author('[INFO] Starting Worker', url=f'https://{domain}')
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
+    return app.webhook.send(embeds=em)
+
+def log_server_stop():
+    em = dhooks.Embed(color=Color.red)
+    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_author('[INFO] Server Stopped')
+    return app.webhook.send(embeds=em)
+
+def log_server_update():
+    em = dhooks.Embed(color=Color.orange)
+    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_author('[INFO] Server updating and restarting.')
+    return app.webhook.send(embeds=em)
+
+def log_server_error(excstr):
+    em = Embed(color=Color.red)
+    em.set_author('[ERROR] Exception occured on server')
+    em.description = f'```py\n{excstr}```'
+    em.set_footer(f'Host: {socket.gethostname()}')
+    return app.webhook.send(embeds=em)
+
+@app.exception(Exception)
+async def on_error(request, exception):
+    if not isinstance(exception, SanicException):
+        try:
+            raise(exception)
+        except:
+            excstr = traceback.format_exc()
+            print(excstr)
+            
+        if len(excstr) > 1000:
+            excstr = excstr[:1000] 
+
+        app.add_task(log_server_error(excstr))
+        
+    return text('something went wrong xd', status=500)
+
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
@@ -26,19 +72,11 @@ async def init(app, loop):
     app.session = aiohttp.ClientSession(loop=loop)
     url = config.get('webhook_url')
     app.webhook = dhooks.Webhook.Async(url)
-
-    em = dhooks.Embed(color=Color.green)
-    em.set_author('[INFO] Starting Worker', url=f'https://{domain}')
-    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
-
-    await app.webhook.send(embeds=em)
+    await log_server_start()
 
 @app.listener('after_server_stop')
 async def aexit(app, loop):
-    em = dhooks.Embed(color=Color.red)
-    em.set_footer(f'Hostname: {socket.gethostname()}')
-    em.set_author('[INFO] Server Stopped')
-    await app.webhook.send(embeds=em)
+    await log_server_stop()
     await app.session.close()
 
 # def production_route(*args, **kwargs): # subdomains dont exist on localhost.
@@ -99,10 +137,8 @@ async def upgrade(request):
     return response.json({'success': True})
 
 async def restart_later():
-    em = dhooks.Embed(color=Color.orange)
-    em.set_footer(f'Hostname: {socket.gethostname()}')
-    em.set_author('[INFO] Server updating and restarting.')
-    await app.webhook.send(embeds=em)
+    await log_server_update()
+    await log_server_stop()
     await app.session.close()
     command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
