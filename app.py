@@ -18,6 +18,7 @@ with open('config.json') as f:
 app = Sanic(__name__)
 dev_mode = bool(int(config.get('development')))
 domain = None if dev_mode else config.get('domain')
+URL = f'https://{domain}' if domain else None
 
 class Color:
     green = 0x2ecc71
@@ -26,32 +27,39 @@ class Color:
 
 def log_server_start():
     em = dhooks.Embed(color=Color.green)
-    em.set_author('[INFO] Starting Worker', url=f'https://{domain}')
+    em.set_author('[INFO] Starting Worker', url=URL)
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
     return app.webhook.send(embeds=em)
 
 def log_server_stop():
     em = dhooks.Embed(color=Color.red)
-    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
     em.set_author('[INFO] Server Stopped')
     return app.webhook.send(embeds=em)
 
 def log_server_update():
     em = dhooks.Embed(color=Color.orange)
-    em.set_footer(f'Hostname: {socket.gethostname()}')
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
     em.set_author('[INFO] Server updating and restarting.')
     return app.webhook.send(embeds=em)
 
 def log_server_error(excstr):
-    em = Embed(color=Color.red)
+    em = dhooks.Embed(color=Color.red)
     em.set_author('[ERROR] Exception occured on server')
     em.description = f'```py\n{excstr}```'
-    em.set_footer(f'Host: {socket.gethostname()}')
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {domain}')
     return app.webhook.send(embeds=em)
+
+@app.exception(SanicException)
+async def sanic_exception(request, exception):
+    try:
+        raise(exception)
+    except:
+        traceback.print_exc()
+    return response.text(str(exception), status=exception.status_code)
 
 @app.exception(Exception)
 async def on_error(request, exception):
-    print('hellow')
     if not isinstance(exception, SanicException):
         try:
             raise(exception)
@@ -63,8 +71,7 @@ async def on_error(request, exception):
             excstr = excstr[:1000] 
 
         app.add_task(log_server_error(excstr))
-        
-    return text('something went wrong xd', status=500)
+    return response.text('something went wrong xd', status=500)
 
 @app.listener('before_server_start')
 async def init(app, loop):
@@ -88,12 +95,13 @@ async def aexit(app, loop):
 
 app.static('/static', './static')
 
-@app.get('/')
-async def wildcard(request):
-    return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
+# @app.get('/')
+# async def wildcard(request):
+#     return response.text(f'Hello there, this subdomain doesnt do anything yet. ({request.host})')
 
 @app.get('/', host=domain)
 async def index(request):
+    print('bob')
     b
     with open('static/index.html') as f:
         return response.html(f.read())
@@ -145,4 +153,4 @@ async def restart_later():
     command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
 
-app.run(host='0.0.0.0', port=8000 if dev_mode else 80)
+app.run(host='127.0.0.1' if dev_mode else '0.0.0.0', port=8000 if dev_mode else 80)
