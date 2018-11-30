@@ -13,7 +13,7 @@ from core.config import Config
 
 app = Sanic(__name__)
 app.cfg = config = Config.from_json('config.json')
-app.static('/static', './static')
+app.static('/', './static')
 
 app.blueprint(core.api)
 app.blueprint(core.rd)
@@ -58,8 +58,11 @@ async def on_error(request, exception):
 
 @app.get('/', host=config.domain)
 async def index(request):
-    with open('static/index.html') as f:
-        return response.html(f.read())
+    return await response.file('static/index.html')
+
+@app.get('/generative-artwork', host=config.domain)
+async def genetics(request):
+    return await response.file('static/generative.html')
 
 if __name__ == '__main__':
     host = '127.0.0.1' if config.development else '0.0.0.0'
