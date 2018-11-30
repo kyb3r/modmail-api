@@ -110,6 +110,12 @@
   .conf-table td {
     border-top: none;
   }
+
+  .span6 {
+    position: absolute;
+    left: 50%;
+    transform: translate(-60%);
+  }
 </style>
 
 <div id="wrap">
@@ -152,46 +158,6 @@
         </div> <!-- /#pictureframe -->
 
       </center>
-    </div> <!-- /.row -->
-
-    <div class="row">
-
-      <div class="span6" style="margin-bottom: 30px;">
-
-        <center><h4>Evolving your images</h4></center>
-
-        Welcome! Click start to see genetics in action, as a
-        randomly generated collection of shapes evolve to resemble
-        a given picture.
-
-        <center><h5>How it Works</h5></center>
-
-        This page uses a genetic algorithm to model a population
-        of individuals, each containing a string of DNA which can
-        be visualised in the form of an image. By starting with a
-        population consisting of a randomly generated gene pool,
-        each individual is compared against the reference image
-        (the one on the left), and the individuals can then be
-        ranked by their likeness to it, known as their "fitness",
-        with the best fit being displayed on the output image (the
-        one on the right). By breeding the fittest individuals
-        from the population, the DNA which produces the most
-        accurate representation of the reference image is selected
-        over successive generations, effectively demonstrating the
-        power of a natural selection process to produce the best
-        candidate for any given environment.
-
-        <center><h5>Source Code</h5></center>
-
-        As with all good things in life, this was created for fun, free,
-        and science. The full source code for this site is available on
-        <a href="https://github.com/ChrisCummins/chriscummins.github.io" target="_blank">GitHub</a>
-        and is released under the terms of the MIT License. If you just want
-        to see how the genetics algorithm works, you can see the JavaScript
-        implementation
-        <a href="https://github.com/ChrisCummins/chriscummins.github.io/tree/master/js/genetics.js" target="_blank" target="_blank">here</a>.
-
-      </div> <!-- /.span6 -->
 
       <div class="span6">
 
