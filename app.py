@@ -13,10 +13,11 @@ from core.config import Config
 
 app = Sanic(__name__)
 app.cfg = config = Config.from_json('config.json')
-app.static('/', './static')
 
 app.blueprint(core.api)
 app.blueprint(core.rd)
+
+app.static('/', './static')
 
 @app.listener('before_server_start')
 async def init(app, loop):
