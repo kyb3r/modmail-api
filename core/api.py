@@ -23,7 +23,26 @@ async def upgrade(request):
 
 @api.post('/modmail')
 async def modmail(request):
-    return response.json(request.json)
+    data = request.json
+    valid_keys = ('guild_id', 'name', 'member_count', 'uptime', 'version')
+
+    if any(k not in data for k in valid_keys):
+        return response.json({'message': 'invalid payload'})
+    
+    await request.app.db.users.update_one(
+        {'guild_id': data['guild_id']}, 
+        {'$set': data}, 
+        upsert=True
+        )
+
+    return response.json({'success': 'true'})
+
+@api.get('/modmail')
+async def get_modmail_info(request):
+    data = {
+        'latest_version': '1.1.5'
+        'instances': await request.app.db.users.count_documents()
+    }
 
 @api.get('/')
 async def index(request):

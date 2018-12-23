@@ -8,6 +8,7 @@ sanic = "*"
 aiohttp = "*"
 dhooks = "*"
 python-box = "*"
+motor = "*"
 
 [dev-packages]
 

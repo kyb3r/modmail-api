@@ -7,6 +7,7 @@ from sanic.exceptions import SanicException
 
 import aiohttp
 import dhooks
+from motor.motor_asyncio import AsyncIOMotorClient
 
 import core
 from core.config import Config
@@ -27,6 +28,8 @@ async def init(app, loop):
     app.webhook = dhooks.Webhook.Async(config.webhook_url)
     app.webhook.avatar_url = 'http://icons.iconarchive.com/icons/graphicloads/100-flat/256/analytics-icon.png'
     app.webhook.username = 'kybr.tk'
+    app.db = AsyncIOMotorClient(config.mongo).modmail
+
     await core.log_server_start(app)
 
 @app.listener('after_server_stop')
