@@ -22,6 +22,19 @@ async def upgrade(request):
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
 
+@api.get('/modmail')
+async def get_modmail_info(request):
+    app = request.app
+
+    resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
+    version = (await resp.text()).splitlines()[44].split(' = ')[1].strip("'")
+
+    data = {
+        'latest_version': version,
+        'instances': await request.app.db.users.estimated_document_count()
+    }
+    return response.json(data)
+
 @api.post('/modmail')
 async def modmail(request):
     data = request.json
@@ -37,19 +50,6 @@ async def modmail(request):
         )
 
     return response.json({'success': 'true'})
-
-@api.get('/modmail')
-async def get_modmail_info(request):
-    app = request.app
-
-    resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
-    version = (await resp.text()).splitlines()[44].split(' = ')[1].strip("'")
-
-    data = {
-        'latest_version': version,
-        'instances': await request.app.db.users.estimated_document_count()
-    }
-    return response.json(data)
 
 @api.get('/')
 async def index(request):
