@@ -38,8 +38,9 @@ async def get_modmail_info(request):
 @api.post('/modmail')
 async def modmail(request):
     data = request.json
+
     valid_keys = (
-        'guild_id', 'name', 'member_count', 
+        'guild_id', 'guild_name', 'member_count', 
         'uptime', 'version', 'bot_id', 'bot_name'
         )
 
