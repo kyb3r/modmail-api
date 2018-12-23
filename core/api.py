@@ -27,7 +27,7 @@ async def get_modmail_info(request):
     app = request.app
 
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
-    version = (await resp.text()).splitlines()[44].split(' = ')[1].strip("'")
+    version = (await resp.text()).splitlines()[24].split(' = ')[1].strip("'")
 
     data = {
         'latest_version': version,
@@ -38,7 +38,10 @@ async def get_modmail_info(request):
 @api.post('/modmail')
 async def modmail(request):
     data = request.json
-    valid_keys = ('guild_id', 'name', 'member_count', 'uptime', 'version')
+    valid_keys = (
+        'guild_id', 'name', 'member_count', 
+        'uptime', 'version', 'bot_id', 'bot_name'
+        )
 
     if any(k not in data for k in valid_keys):
         return response.json({'message': 'invalid payload'})
