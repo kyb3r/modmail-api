@@ -31,7 +31,7 @@ async def get_modmail_info(request):
 
     data = {
         'latest_version': version,
-        'instances': len(await request.app.db.users.find())
+        'instances': await app.db.users.count_documents({})
     }
     return response.json(data)
 
