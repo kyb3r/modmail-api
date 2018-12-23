@@ -40,7 +40,7 @@ async def modmail(request):
 @api.get('/modmail')
 async def get_modmail_info(request):
     data = {
-        'latest_version': '1.1.5'
+        'latest_version': '1.1.5',
         'instances': await request.app.db.users.count_documents()
     }
 
