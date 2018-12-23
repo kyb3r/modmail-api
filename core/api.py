@@ -52,5 +52,5 @@ async def restart_later(app):
     await log_server_update(app)
     await log_server_stop(app)
     await app.session.close()
-    command = 'git pull && pipenv install && pm2 restart webserver'
+    command = 'git pull && pm2 restart webserver'
     os.system(f'echo {app.password}|sudo -S {command}')
