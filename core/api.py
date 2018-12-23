@@ -53,7 +53,7 @@ async def get_modmail_info(request):
 
 @api.get('/')
 async def index(request):
-    return response.json({'success': True, 'message': 'hello there, this api doesnt do anything lmao'})
+    return response.json({'success': True, 'endpoints': ['/hooks/github', '/modmail']})
 
 async def restart_later(app):
     await log_server_update(app)
