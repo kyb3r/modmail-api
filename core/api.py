@@ -1,6 +1,7 @@
 import os
 
 from sanic import Blueprint, response
+import re
 
 from .config import Config
 from .utils import validate_github_payload
@@ -39,10 +40,16 @@ async def modmail(request):
 
 @api.get('/modmail')
 async def get_modmail_info(request):
+    app = request.app
+
+    resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
+    version = (await resp.text()).splitlines()[44].split(' = ')[1].strip("'")
+
     data = {
-        'latest_version': '1.1.5',
-        'instances': await request.app.db.users.count_documents()
+        'latest_version': version,
+        'instances': await request.app.db.users.estimated_document_count()
     }
+    return response.json(data)
 
 @api.get('/')
 async def index(request):
