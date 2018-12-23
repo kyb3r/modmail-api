@@ -22,7 +22,7 @@ async def upgrade(request):
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
 
-@api.get('/modmail')
+@api.get('/modmail/meta')
 async def get_modmail_info(request):
     app = request.app
 
