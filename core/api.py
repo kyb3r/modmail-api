@@ -23,7 +23,7 @@ async def upgrade(request):
 
 @api.post('/modmail')
 async def modmail(request):
-    return request.json
+    return response.json(request.json)
 
 @api.get('/')
 async def index(request):
