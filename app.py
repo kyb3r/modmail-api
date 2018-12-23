@@ -17,7 +17,7 @@ app.cfg = config = Config.from_json('config.json')
 app.blueprint(core.api)
 app.blueprint(core.rd)
 
-app.static('/', './static')
+app.static('/static', './static')
 
 @app.listener('before_server_start')
 async def init(app, loop):

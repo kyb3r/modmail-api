@@ -20,7 +20,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-    <script src="/js/app-components.js"></script>
+    <script src="static/js/app-components.js"></script>
     <script>
       function previewFile() {
         // Where you will display your image
@@ -41,7 +41,7 @@
           // Load image as a base64 encoded URI
           reader.readAsDataURL(file);
         } else {
-          preview.src = "/images/gen/image.jpg";
+          preview.src = "static/images/gen/image.jpg";
         }
   }
     </script>
@@ -397,7 +397,7 @@
 </div>
 
 <!-- The hidden bits: -->
-<img src="/images/gen/image.jpg"
+<img src="static/images/gen/image.jpg"
      id="referenceImage"
      style="display: none;" />
 
@@ -413,7 +413,7 @@
 
 <div class="underlay"></div>
 
-<script src="/js/genetics.js"></script>
+<script src="/static/js/genetics.js"></script>
 
   </body>
 

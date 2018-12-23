@@ -21,6 +21,10 @@ async def upgrade(request):
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
 
+@api.post('/modmail')
+async def modmail(request):
+    return request.json
+
 @api.get('/')
 async def index(request):
     return response.json({'success': True, 'message': 'hello there, this api doesnt do anything lmao'})
