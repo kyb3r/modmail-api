@@ -48,7 +48,7 @@ async def modmail(request):
         return response.json({'message': 'invalid payload'})
     
     await request.app.db.users.update_one(
-        {'guild_id': data['guild_id']}, 
+        {'bot_id': data['bot_id']}, 
         {'$set': data}, 
         upsert=True
         )
