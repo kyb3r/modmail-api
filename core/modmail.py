@@ -116,8 +116,8 @@ async def modmail_github_callback(request):
             {'$set': {'access_token': data['access_token'][0]}},
             upsert=True
         )
-    await update_modmail(request.app, data['access_token'][0])
-    return response.text('Completed update.')
+    # await update_modmail(request.app, data['access_token'][0])
+    return response.text('Do the command agaiN?')
 
 
 async def update_modmail(app, access_token, pull=True):
