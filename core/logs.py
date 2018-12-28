@@ -16,10 +16,11 @@ def log_server_start(app):
     if url:
         cmd = r'git show -s HEAD~3..HEAD --format="[{}](https://github.com/kyb3r/webserver/commit/%H) %s"'
         cmd = cmd.format(r'\`%h\`') if os.name == 'posix' else cmd.format(r'`%h`')
-        revision = os.popen(cmd).read().strip()
+        revision = '\n'.join(os.popen(cmd).read().strip().splitlines()[:3])
         em.add_field('Latest changes', revision, inline=False)
         em.add_field('Live at', url, inline=False)
         em.add_field('Github', 'https://kybr.tk/github')
+
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {config.DOMAIN}')
     return app.webhook.send(embeds=[em])
 
