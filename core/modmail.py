@@ -11,6 +11,7 @@ prefix = '/api/modmail' if config.DEV_MODE else '/modmail'
 
 modmail = Blueprint('modmail', host=host, url_prefix=prefix)
 
+
 @modmail.get('/')
 async def get_modmail_info(request):
     app = request.app
@@ -23,6 +24,7 @@ async def get_modmail_info(request):
         'instances': await app.db.users.count_documents({})
     }
     return response.json(data)
+
 
 @modmail.post('/')
 async def update_modmail_data(request):
@@ -44,6 +46,7 @@ async def update_modmail_data(request):
 
     return response.json({'success': 'true'})
 
+
 @modmail.get('/heroku')
 async def modmail_heroku_callback(request):
     code = request.raw_args['code']
@@ -59,7 +62,26 @@ async def modmail_heroku_callback(request):
     return response.text('Completed authentication. Please do the command again in discord.')
 
 
-@modmail.get('/githubcheck/<userid>')
+@modmail.get('/github/user/<userid>')
+async def modmail_github_user(request, userid):
+    userid = str(userid)
+    user = await request.app.db.oauth.find_one({'type': 'github', 'user_id': userid})
+    if user is None:
+        return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
+    else:
+        user, data = await update_modmail(request.app, user['access_token'], pull=False)
+        return response.json({
+            'error': False, 
+            'message': 'User data retrieved.', 
+            'user': {
+                'username': user.username, 
+                'avatar_url': user.avatar_url, 
+                'url': user.url
+            }
+        })
+
+
+@modmail.get('/github/pull/<userid>')
 async def modmail_github_check(request, userid):
     userid = str(userid)
     user = await request.app.db.oauth.find_one({'type': 'github', 'user_id': userid})
@@ -74,12 +96,12 @@ async def modmail_github_check(request, userid):
                 'username': user.username, 
                 'avatar_url': user.avatar_url, 
                 'url': user.url
-                }, 
+            },
             'data': data
         })
 
 
-@modmail.get('/github')
+@modmail.get('/github/callback')
 async def modmail_github_callback(request):
     code = request.raw_args['code']
     async with request.app.session.post('https://github.com/login/oauth/access_token', params={
@@ -98,7 +120,10 @@ async def modmail_github_callback(request):
     return response.text('Completed update.')
 
 
-async def update_modmail(app, access_token):
+async def update_modmail(app, access_token, pull=True):
     user = await Github.login(app, access_token)
-    data = await user.update_repository()
+    if pull:
+        data = await user.update_repository()
+    else:
+        data = None
     return user, data
