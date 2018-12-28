@@ -106,6 +106,7 @@ async def logged_in(request):
             title='Successfully Authenticated',
             message='You can now go back to discord and use the <code>update</code> command.'
         )
+    return response.html(html)
 
 @modmail.get('/already-logged-in')
 async def already_logged_in(request):
@@ -114,6 +115,7 @@ async def already_logged_in(request):
             title='Already Logged In!',
             message='Please use the <code>github logout</code> command and logout first.'
         )
+    return response.html(html)
 
 @modmail.get('/github/callback')
 async def modmail_github_callback(request):
