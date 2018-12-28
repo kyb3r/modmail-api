@@ -1,5 +1,3 @@
-import os
-import json
 import traceback
 
 from sanic import Sanic, response
@@ -33,10 +31,12 @@ async def init(app, loop):
 
     await core.log_server_start(app)
 
+
 @app.listener('after_server_stop')
 async def aexit(app, loop):
     await core.log_server_stop(app)
     await app.session.close()
+
 
 @app.exception(SanicException)
 async def sanic_exception(request, exception):
@@ -46,6 +46,7 @@ async def sanic_exception(request, exception):
         traceback.print_exc()
     return response.text(str(exception), status=exception.status_code)
 
+
 @app.exception(Exception)
 async def on_error(request, exception):
     if not isinstance(exception, SanicException):
@@ -54,7 +55,7 @@ async def on_error(request, exception):
         except:
             excstr = traceback.format_exc()
             print(excstr)
-            
+
         if len(excstr) > 1000:
             excstr = excstr[:1000] 
 

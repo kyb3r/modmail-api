@@ -1,7 +1,6 @@
 import os
 
 from sanic import Blueprint, response
-import re
 
 from core import config
 from .utils import validate_github_payload
@@ -17,13 +16,15 @@ api = Blueprint('api', host=host, url_prefix=prefix)
 @api.post('/hooks/github')
 async def upgrade(request):
     if not validate_github_payload(request):
-        return response.text('fuck off', 401) # not sent by github
+        return response.text('fuck off', 401)  # not sent by github
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
+
 
 @api.get('/')
 async def index(request):
     return response.json({'success': True, 'endpoints': ['/hooks/github', '/modmail']})
+
 
 async def restart_later(app):
     await log_server_update(app)
