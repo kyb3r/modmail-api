@@ -126,6 +126,7 @@ async def modmail_github_callback(request):
     }
 
     async with request.app.session.post('https://github.com/login/oauth/access_token', params=params) as resp:
+        url = 'https://' + host + prefix + 
         data = parse_qs(await resp.text())
         try:
             await request.app.db.oauth.insert_one({
@@ -134,6 +135,6 @@ async def modmail_github_callback(request):
                 'access_token': data['access_token'][0]
                 })
         except DuplicateKeyError:
-            return response.redirect(request.app.url_for('already_logged_in'))
+            return response.redirect(url + '/already-logged-in')
         else:
-            return response.redirect(request.app.url_for('logged_in'))
+            return response.redirect(url + '/logged-in')
