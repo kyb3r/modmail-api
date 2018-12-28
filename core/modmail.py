@@ -4,6 +4,8 @@ from sanic import Blueprint, response
 
 from utils.github import Github
 from core import config
+from .utils import validate_github_payload
+from .logs import log_server_stop, log_server_update, log_message
 
 domain = config.DOMAIN
 
@@ -17,8 +19,10 @@ modmail = Blueprint('modmail', host=host, url_prefix=prefix)
 async def get_modmail_info(request):
     app = request.app
 
-    resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/master/bot.py')
-    version = (await resp.text()).splitlines()[24].split(' = ')[1].strip("'")
+    resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
+    text = await resp.text()
+
+    version = text.splitlines()[24].split(' = ')[1].strip("'")
 
     data = {
         'latest_version': version,
@@ -101,7 +105,7 @@ async def modmail_github_check(request, userid):
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        user = Github.login(request.app, user['access_token'])
+        user = await Github.login(request.app, user['access_token'])
         data = await user.update_repository()
         return response.json({
             'error': False, 
