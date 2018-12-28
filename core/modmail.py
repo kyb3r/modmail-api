@@ -1,11 +1,8 @@
-import os
-
+from urllib.parse import parse_qs
 from sanic import Blueprint, response
-import re
 
+from utils.github import Github
 from core import config
-from .utils import validate_github_payload
-from .logs import log_server_stop, log_server_update
 
 domain = config.DOMAIN
 
