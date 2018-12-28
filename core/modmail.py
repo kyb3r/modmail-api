@@ -20,7 +20,6 @@ async def get_modmail_info(request):
 
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
     text = await resp.text()
-    await log_message(app, text[:2000])
 
     version = text.splitlines()[24].split(' = ')[1].strip("'")
 
