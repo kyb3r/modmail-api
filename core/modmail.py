@@ -69,7 +69,7 @@ async def modmail_github_user(request, userid):
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        user, data = await update_modmail(request.app, user['access_token'], pull=False)
+        user = await Github.login(app, user['access_token'])
         return response.json({
             'error': False, 
             'message': 'User data retrieved.', 
@@ -88,7 +88,8 @@ async def modmail_github_check(request, userid):
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        user, data = await update_modmail(request.app, user['access_token'])
+        user = Github.login(request.app, user['access_token'])
+        data = await user.update_repository()
         return response.json({
             'error': False, 
             'message': 'Updated modmail.', 
@@ -118,12 +119,3 @@ async def modmail_github_callback(request):
         )
     # await update_modmail(request.app, data['access_token'][0])
     return response.text('Do the command agaiN?')
-
-
-async def update_modmail(app, access_token, pull=True):
-    user = await Github.login(app, access_token)
-    if pull:
-        data = await user.update_repository()
-    else:
-        data = None
-    return user, data
