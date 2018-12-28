@@ -92,7 +92,7 @@ async def modmail_github_check(request, userid):
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        user = Github.login(request.app, user['access_token'])
+        user = await Github.login(request.app, user['access_token'])
         data = await user.update_repository()
         return response.json({
             'error': False, 
