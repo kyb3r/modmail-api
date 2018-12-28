@@ -17,6 +17,7 @@ app.cfg = config = Config.from_json('config.json')
 
 app.blueprint(core.api)
 app.blueprint(core.rd)
+app.blueprint(core.modmail)
 
 app.static('/static', './static')
 
