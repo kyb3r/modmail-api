@@ -1,10 +1,10 @@
-import json 
-from box import Box
+from decouple import config
 
-class Config:
-    @staticmethod
-    def from_json(fp):
-        with open(fp) as f:
-            cfg = Box(json.load(f))
-        cfg.domain = None if cfg.development else cfg.domain
-        return cfg
+DEV_MODE = config('development', cast=bool)
+PASSWORD = config('password')
+DOMAIN = config('domain')
+WEBHOOK_URL = 'https://discordapp.com/api/webhooks/516452309107212328/2fcVFuW4lMDDdanhJATcwxd2BzcddN-_7ov9xwVP01ppSbh5SIB2hhYexCGeDY4QEKPY' #config('webhook_url')
+MONGO = config('mongo')
+
+HEROKU_SECRET = config('heroku_secret')
+GITHUB_SECRET = config('github_secret')

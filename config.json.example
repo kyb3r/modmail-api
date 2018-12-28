@@ -1,6 +1,0 @@
-{
-    "development": 1,
-    "password": "password",
-    "domain": "kyberite.tk",
-    "webhook_url": "https://discordapp.com/api/webhooks/XXXXXX/XXXXXX"
-}

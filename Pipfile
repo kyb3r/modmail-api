@@ -9,6 +9,8 @@ aiohttp = "*"
 dhooks = "*"
 python-box = "*"
 motor = "*"
+python-decouple = "*"
+dnspython = "*"
 
 [dev-packages]
 
