@@ -126,7 +126,7 @@ async def modmail_github_callback(request):
     }
 
     async with request.app.session.post('https://github.com/login/oauth/access_token', params=params) as resp:
-        url = 'https://' + host + prefix + 
+        url = 'https://' + host + prefix
         data = parse_qs(await resp.text())
         try:
             await request.app.db.oauth.insert_one({
