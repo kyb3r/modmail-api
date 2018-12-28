@@ -104,7 +104,7 @@ async def logged_in(request):
     with open('static/template.html') as f:
         html = f.read().format(
             title='Successfully Authenticated',
-            message='You can now go back to discord and use the <code>update</code> command.'
+            message='You can now go back to discord and use the `<code>update</code>` command.'
         )
     return response.html(html)
 
@@ -113,7 +113,7 @@ async def already_logged_in(request):
     with open('static/template.html') as f:
         html = f.read().format(
             title='Already Logged In!',
-            message='Please use the <code>github logout</code> command and logout first.'
+            message='Please use the `<code>github logout</code>` command and logout first.'
         )
     return response.html(html)
 
