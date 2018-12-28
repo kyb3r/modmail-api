@@ -1,10 +1,13 @@
 from decouple import config
 
+
 DEV_MODE = config('development', cast=bool)
 PASSWORD = config('password')
-DOMAIN = config('domain')
-WEBHOOK_URL = 'https://discordapp.com/api/webhooks/516452309107212328/2fcVFuW4lMDDdanhJATcwxd2BzcddN-_7ov9xwVP01ppSbh5SIB2hhYexCGeDY4QEKPY' #config('webhook_url')
-MONGO = config('mongo')
+WEBHOOK_URL = config('webhook_url')
+MONGO = config('mongo') 
+DOMAIN = 'kybr.tk' if not DEV_MODE else None
+HOST = '127.0.0.1' if DEV_MODE else '0.0.0.0'
+PORT = 8000 if DEV_MODE else 80
 
 HEROKU_SECRET = config('heroku_secret')
 GITHUB_SECRET = config('github_secret')

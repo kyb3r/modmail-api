@@ -1,8 +1,8 @@
-import dhooks 
+import dhooks
 import socket
 import os
 
-from . import  config
+from core import config
 
 class Color:
     green = 0x2ecc71

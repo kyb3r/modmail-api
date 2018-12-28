@@ -1,6 +1,6 @@
 from sanic import Blueprint, response
 from sanic.exceptions import abort
-from . import config
+from core import config
 
 rd = Blueprint('redirects')
 
