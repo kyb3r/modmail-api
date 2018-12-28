@@ -39,3 +39,10 @@ def log_server_error(app, excstr):
     em.description = f'```py\n{excstr}```'
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
     return app.webhook.send(embeds=[em])
+
+def log_message(app, message):
+    em = dhooks.Embed(color=Color.orange)
+    em.set_author('[INFO] Message')
+    em.description = f'```\n{message}```'
+    em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
+    return app.webhook.send(embeds=[em])

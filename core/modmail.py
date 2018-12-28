@@ -5,7 +5,7 @@ import re
 
 from core import config
 from .utils import validate_github_payload
-from .logs import log_server_stop, log_server_update
+from .logs import log_server_stop, log_server_update, log_message
 
 domain = config.DOMAIN
 
@@ -19,7 +19,10 @@ async def get_modmail_info(request):
     app = request.app
 
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
-    version = (await resp.text()).splitlines()[24].split(' = ')[1].strip("'")
+    text = await resp.text()
+    await log_message(app, text[:2000])
+
+    version = text.splitlines()[24].split(' = ')[1].strip("'")
 
     data = {
         'latest_version': version,
