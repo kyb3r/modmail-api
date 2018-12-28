@@ -52,25 +52,9 @@ async def update_modmail_data(request):
     return response.json({'success': 'true'})
 
 
-# @modmail.get('/heroku')
-# async def modmail_heroku_callback(request):
-#     code = request.raw_args['code']
-#     async with request.app.session.post(
-#         'https://id.heroku.com/oauth/token',
-#         data=f'grant_type=authorization_code&code={code}&client_secret={config.HEROKU_SERET}'
-#     ) as resp:
-#         data = await resp.json()
-#         await request.app.db.oauth.find_one_and_update(
-#             {'type': 'heroku', '_id': data['user_id']},
-#             {'$set': {'refresh_token': data['refresh_token'], 'access_token': data['access_token']}}
-#         )
-#     return response.text('Completed authentication. Please do the command again in discord.')
-
-
-@modmail.get('/github/user/<userid>')
-async def modmail_github_user(request, userid):
-    userid = str(userid)
-    user = await request.app.db.oauth.find_one({'type': 'github', '_id': userid})
+@modmail.get('/github/userinfo')
+async def modmail_github_user(request):
+    user = await request.app.db.oauth.find_one({'type': 'github', '_id': request.token})
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
@@ -85,23 +69,20 @@ async def modmail_github_user(request, userid):
             }
         })
 
-
-
-@modmail.get('/github/logout/<userid>')
-async def github_logout(request, userid):
-    userid = str(userid)
-    user = await request.app.db.oauth.find_one({'type': 'github', '_id': userid})
+@modmail.get('/github/logout')
+async def github_logout(request):
+    user = await request.app.db.oauth.find_one({'type': 'github', '_id': request.token})
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        await request.app.db.oauth.find_one_and_delete({'type': 'github', '_id': userid})
+        await request.app.db.oauth.find_one_and_delete({'type': 'github', '_id': request.token})
         return response.json({'error': False, 'message': 'User logged out.'})
 
 
-@modmail.get('/github/pull/<userid>')
-async def modmail_github_check(request, userid):
+@modmail.get('/github/update-repository')
+async def modmail_github_check(request):
     userid = str(userid)
-    user = await request.app.db.oauth.find_one({'type': 'github', '_id': userid})
+    user = await request.app.db.oauth.find_one({'type': 'github', '_id': request.token})
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
@@ -121,18 +102,23 @@ async def modmail_github_check(request, userid):
 
 @modmail.get('/github/callback')
 async def modmail_github_callback(request):
+
     code = request.raw_args['code']
-    async with request.app.session.post('https://github.com/login/oauth/access_token', params={
+    params = {
         'client_id': 'e54e4ff0f234ee9f22aa',
         'client_secret': config.GITHUB_SECRET,
         'code': code
-    }) as resp:
+    }
+
+    async with request.app.session.post('https://github.com/login/oauth/access_token', params=params) as resp:
         data = parse_qs(await resp.text())
         try:
-            await request.app.db.oauth.insert_one(
-                {'type': 'github', '_id': request.raw_args['user_id'], 'access_token': data['access_token'][0]}
-            )
+            await request.app.db.oauth.insert_one({
+                'type': 'github', 
+                '_id': request.raw_args['token'], 
+                'access_token': data['access_token'][0]
+                })
         except DuplicateKeyError:
-            return response.text('Someone is already authenticated. Please use the `github logout` command and logout fiirst.', status=400)
+            return response.text('Someone is already authenticated. Please use the `github logout` command and logout first.', status=400)
         else:
             return response.text('Successfully authenticated. You can now go back to discord and update the bot with the command.')
