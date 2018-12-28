@@ -32,7 +32,6 @@ async def init(app, loop):
     app.db = AsyncIOMotorClient(config.MONGO).modmail
 
     await core.log_server_start(app)
-    await app.webhook.send(os.getenv('domain') + ' ' + config.DOMAIN)
 
 @app.listener('after_server_stop')
 async def aexit(app, loop):
