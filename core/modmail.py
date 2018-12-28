@@ -86,18 +86,6 @@ async def modmail_github_user(request, userid):
         })
 
 
-
-@modmail.get('/github/logout/<userid>')
-async def github_logout(request, userid):
-    userid = str(userid)
-    user = await request.app.db.oauth.find_one({'type': 'github', '_id': userid})
-    if user is None:
-        return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
-    else:
-        await request.app.db.oauth.find_one_and_delete({'type': 'github', '_id': userid})
-        return response.json({'error': False, 'message': 'User logged out.'})
-
-
 @modmail.get('/github/pull/<userid>')
 async def modmail_github_check(request, userid):
     userid = str(userid)
