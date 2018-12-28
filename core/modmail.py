@@ -101,9 +101,10 @@ async def modmail_github_check(request):
 
 @modmail.get('/logged-in')
 async def logged_in(request):
+    username = request.raw_args['username']
     with open('static/template.html') as f:
         html = f.read().format(
-            title='Successfully Authenticated',
+            title=f'Hey {username}!',
             message='You can now go back to discord and use the `<code>update</code>` command.'
         )
     return response.html(html)
@@ -139,4 +140,5 @@ async def modmail_github_callback(request):
         except DuplicateKeyError:
             return response.redirect(url + '/already-logged-in')
         else:
-            return response.redirect(url + '/logged-in')
+            user = await Github.login(request.app, data['access_token'][0])
+            return response.redirect(url + '/logged-in', username=user.name)
