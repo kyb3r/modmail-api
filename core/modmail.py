@@ -141,4 +141,4 @@ async def modmail_github_callback(request):
             return response.redirect(url + '/already-logged-in')
         else:
             user = await Github.login(request.app, data['access_token'][0])
-            return response.redirect(url + '/logged-in', username=user.name)
+            return response.redirect(url + '/logged-in', username=user.username)
