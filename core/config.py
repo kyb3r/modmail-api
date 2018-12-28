@@ -1,10 +1,11 @@
 import json 
-from box import Box
+from decouple import config
 
-class Config:
-    @staticmethod
-    def from_json(fp):
-        with open(fp) as f:
-            cfg = Box(json.load(f))
-        cfg.domain = None if cfg.development else cfg.domain
-        return cfg
+
+DEV_MODE = config('development', cast=bool)
+PASSWORD = config('password')
+WEBHOOK_URL = config('webhook_url')
+MONGO = config('mongo') 
+DOMAIN = config('domain') if not DEV_MODE else None
+HOST = '127.0.0.1' if DEV_MODE else '0.0.0.0'
+PORT = 8000 if DEV_MODE else 80

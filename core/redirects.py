@@ -1,8 +1,6 @@
 from sanic import Blueprint, response
 from sanic.exceptions import abort
-from .config import Config
-
-config = Config.from_json('config.json')
+from core import config
 
 rd = Blueprint('redirects')
 
@@ -19,6 +17,6 @@ async def redirects(request, path):
         abort(404)
     return response.redirect(endpoint)
 
-@rd.get('/<repo>', host=f'repo.{config.domain}')
+@rd.get('/<repo>', host=f'repo.{config.DOMAIN}')
 async def repo(request, repo):
     return response.redirect(f'https://github.com/kyb3r/{repo}')

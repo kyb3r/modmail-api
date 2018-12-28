@@ -10,10 +10,10 @@ import dhooks
 from motor.motor_asyncio import AsyncIOMotorClient
 
 import core
-from core.config import Config
+from core import config
 
 app = Sanic(__name__)
-app.cfg = config = Config.from_json('config.json')
+app.cfg = config
 
 app.blueprint(core.api)
 app.blueprint(core.rd)
@@ -24,12 +24,12 @@ app.static('/static', './static')
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
-    app.password = config.password
+    app.password = config.PASSWORD
     app.session = aiohttp.ClientSession(loop=loop)
-    app.webhook = dhooks.Webhook.Async(config.webhook_url)
+    app.webhook = dhooks.Webhook.Async(config.WEBHOOK_URL)
     app.webhook.avatar_url = 'http://icons.iconarchive.com/icons/graphicloads/100-flat/256/analytics-icon.png'
     app.webhook.username = 'kybr.tk'
-    app.db = AsyncIOMotorClient(config.mongo).modmail
+    app.db = AsyncIOMotorClient(config.MONGO).modmail
 
     await core.log_server_start(app)
 
@@ -61,15 +61,13 @@ async def on_error(request, exception):
         app.add_task(core.log_server_error(app, excstr))
     return response.text('something went wrong xd', status=500)
 
-@app.get('/', host=config.domain)
+@app.get('/', host=config.DOMAIN)
 async def index(request):
     return await response.file('static/index.html')
 
-@app.get('/generative-artwork', host=config.domain)
+@app.get('/generative-artwork', host=config.DOMAIN)
 async def genetics(request):
     return await response.file('static/generative.html')
 
 if __name__ == '__main__':
-    host = '127.0.0.1' if config.development else '0.0.0.0'
-    port = 8000 if config.development else 80
-    app.run(host=host, port=port)
+    app.run(host=config.HOST, port=config.PORT)

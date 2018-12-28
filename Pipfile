@@ -9,6 +9,7 @@ aiohttp = "*"
 dhooks = "*"
 python-box = "*"
 motor = "*"
+python-decouple = "*"
 
 [dev-packages]
 

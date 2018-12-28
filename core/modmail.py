@@ -3,15 +3,14 @@ import os
 from sanic import Blueprint, response
 import re
 
-from .config import Config
+from core import config
 from .utils import validate_github_payload
 from .logs import log_server_stop, log_server_update
 
-config = Config.from_json('config.json')
-domain = config.domain
+domain = config.DOMAIN
 
-host = None if config.development else f'api.{domain}'
-prefix = '/api/modmail' if config.development else '/modmail'
+host = None if config.DEV_MODE else f'api.{domain}'
+prefix = '/api/modmail' if config.DEV_MODE else '/modmail'
 
 modmail = Blueprint('modmail', host=host, url_prefix=prefix)
 
