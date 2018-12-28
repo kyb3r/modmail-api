@@ -81,7 +81,6 @@ async def github_logout(request):
 
 @modmail.get('/github/update-repository')
 async def modmail_github_check(request):
-    userid = str(userid)
     user = await request.app.db.oauth.find_one({'type': 'github', '_id': request.token})
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
