@@ -99,6 +99,22 @@ async def modmail_github_check(request):
         })
 
 
+@modmail.get('/logged-in')
+async def logged_in(request):
+    with open('../static/template.html') as f:
+        html = f.read().format(
+            title='Successfully Authenticated',
+            message='You can now go back to discord and use the <code>update</code> command.'
+        )
+
+@modmail.get('/already-logged-in')
+async def already_logged_in(request):
+    with open('../static/template.html') as f:
+        html = f.read().format(
+            title='Already Logged In!',
+            message='Please use the <code>github logout</code> command and logout first.'
+        )
+
 @modmail.get('/github/callback')
 async def modmail_github_callback(request):
 
@@ -118,6 +134,6 @@ async def modmail_github_callback(request):
                 'access_token': data['access_token'][0]
                 })
         except DuplicateKeyError:
-            return response.text('Someone is already authenticated. Please use the `github logout` command and logout first.', status=400)
+            return response.redirect(request.app.url_for('already_logged_in'))
         else:
-            return response.text('Successfully authenticated. You can now go back to discord and update the bot with the command.')
+            return response.redirect(request.app.url_for('logged_in'))
