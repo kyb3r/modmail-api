@@ -101,7 +101,7 @@ async def modmail_github_check(request):
 
 @modmail.get('/logged-in')
 async def logged_in(request):
-    with open('../static/template.html') as f:
+    with open('static/template.html') as f:
         html = f.read().format(
             title='Successfully Authenticated',
             message='You can now go back to discord and use the <code>update</code> command.'
@@ -109,7 +109,7 @@ async def logged_in(request):
 
 @modmail.get('/already-logged-in')
 async def already_logged_in(request):
-    with open('../static/template.html') as f:
+    with open('static/template.html') as f:
         html = f.read().format(
             title='Already Logged In!',
             message='Please use the <code>github logout</code> command and logout first.'
