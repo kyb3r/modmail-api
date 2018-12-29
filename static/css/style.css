@@ -35,15 +35,11 @@ body {
   background-color: #24272A;
 }
 
-.btn-large {
+#my-button {
   background-color: #7289DA;
 }
 
-.btn-large:hover {
-  background-color: #7289DA;
-}
-
-.btn-large:visited {
+#my-button:visited {
   background-color: #7289DA;
 }
 
@@ -69,6 +65,16 @@ nav {
 
 #main-card {
     background-color: #2C2F33
+}
+
+.vertical-align-middle {
+    margin: 0px;
+    padding:0px;
+    float: left;
+    position:absolute;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    left:50%;
 }
 
 .icon-block {
