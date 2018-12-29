@@ -70,5 +70,24 @@ async def index(request):
 async def genetics(request):
     return await response.file('static/generative.html')
 
+@app.get('/logged-in')
+async def logged_in(request):
+    username = request.raw_args['username']
+    with open('static/template.html') as f:
+        html = f.read().format(
+            title=f'Hey {username}!',
+            message='You can now go back to discord and use the `<code>update</code>` command.'
+        )
+    return response.html(html)
+
+@app.get('/already-logged-in')
+async def already_logged_in(request):
+    with open('static/template.html') as f:
+        html = f.read().format(
+            title='Already Logged In!',
+            message='Please use the `<code>github logout</code>` command and logout first.'
+        )
+    return response.html(html)
+
 if __name__ == '__main__':
     app.run(host=config.HOST, port=config.PORT)

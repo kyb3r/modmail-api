@@ -99,25 +99,6 @@ async def modmail_github_check(request):
         })
 
 
-@modmail.get('/logged-in')
-async def logged_in(request):
-    username = request.raw_args['username']
-    with open('static/template.html') as f:
-        html = f.read().format(
-            title=f'Hey {username}!',
-            message='You can now go back to discord and use the `<code>update</code>` command.'
-        )
-    return response.html(html)
-
-@modmail.get('/already-logged-in')
-async def already_logged_in(request):
-    with open('static/template.html') as f:
-        html = f.read().format(
-            title='Already Logged In!',
-            message='Please use the `<code>github logout</code>` command and logout first.'
-        )
-    return response.html(html)
-
 @modmail.get('/github/callback')
 async def modmail_github_callback(request):
 
@@ -129,7 +110,7 @@ async def modmail_github_callback(request):
     }
 
     async with request.app.session.post('https://github.com/login/oauth/access_token', params=params) as resp:
-        url = 'https://' + host + prefix
+        url = 'https://kybr.tk'
         data = parse_qs(await resp.text())
         try:
             await request.app.db.oauth.insert_one({
