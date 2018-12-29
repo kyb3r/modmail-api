@@ -76,7 +76,16 @@ async def github_logout(request):
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
         await request.app.db.oauth.find_one_and_delete({'type': 'github', '_id': request.token})
-        return response.json({'error': False, 'message': 'User logged out.'})
+        user = await Github.login(request.app, user['access_token'])
+        return response.json({
+            'error': False, 
+            'message': 'User logged out.',
+            'user': {
+                'username': user.username, 
+                'avatar_url': user.avatar_url, 
+                'url': user.url
+            }
+        })
 
 
 @modmail.get('/github/update-repository')
