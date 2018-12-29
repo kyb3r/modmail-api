@@ -72,7 +72,7 @@ async def genetics(request):
 
 @app.get('/logged-in')
 async def logged_in(request):
-    username = request.raw_args['username']
+    username = request.raw_args.get('username', 'there')
     with open('static/template.html') as f:
         html = f.read().format(
             title=f'Hey {username}!',
