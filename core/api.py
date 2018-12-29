@@ -1,4 +1,5 @@
 import os
+import json
 
 from sanic import Blueprint, response
 
@@ -23,7 +24,17 @@ async def upgrade(request):
 
 @api.get('/')
 async def index(request):
-    return response.json({'success': True, 'endpoints': ['/hooks/github', '/modmail']})
+    endpoints = []
+
+    for name, (route, handler) in request.app.router.routes_names.items():
+        if name.startswith('api.') or name.startswith('modmail'):
+            if route in ['/', '/api/']:
+                continue
+            endpoints.append(route)
+    
+    resp = {'success': True, 'endpoints': endpoints}
+
+    return response.text(json.dumps(resp, indent=4))
 
 
 async def restart_later(app):
