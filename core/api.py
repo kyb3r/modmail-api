@@ -24,16 +24,16 @@ async def upgrade(request):
 
 @api.get('/')
 async def index(request):
-    endpoints = []
+    endpoints = set()
 
     for name, (route, handler) in request.app.router.routes_names.items():
-        if name.startswith('api.') or route.startswith('api.'):
+        if name.startswith('api.') or name.startswith('modmail.') or route.startswith('api.'):
             route = route.replace('api.kybr.tk', '')
             if route in ['/', '/api/']:
                 continue
-            endpoints.append(route)
+            endpoints.add(route)
     
-    resp = {'success': True, 'endpoints': endpoints}
+    resp = {'success': True, 'endpoints': list(endpoints)}
 
     return response.text(json.dumps(resp, indent=4))
 
