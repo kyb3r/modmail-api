@@ -68,6 +68,9 @@ async def on_error(request, exception):
 async def index(request):
     return await response.file('static/index.html')
 
+@app.get('/login')
+async def login(request):
+
 # deprecated
 @app.get('/logged-in')
 async def logged_in(request):
@@ -93,7 +96,7 @@ async def already_logged_in(request):
 async def deprecated(request):
     '''Keep old url users working'''
     if request.method == 'POST':
-        await app.session.post('https//api.modmail.tk/metadata', json=request.json)
+        await app.session.post('https://api.modmail.tk/metadata', json=request.json)
         return response.json({'sucess': True})
     else:
         return response.redirect('https://api.modmail.tk/metadata')
