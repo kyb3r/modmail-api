@@ -19,6 +19,7 @@ app.blueprint(core.modmail)
 
 app.static('/static', './static')
 
+
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
@@ -57,7 +58,7 @@ async def on_error(request, exception):
             print(excstr)
 
         if len(excstr) > 1000:
-            excstr = excstr[:1000] 
+            excstr = excstr[:1000]
 
         app.add_task(core.log_server_error(app, excstr))
     return response.text('something went wrong xd', status=500)

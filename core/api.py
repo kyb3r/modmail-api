@@ -14,6 +14,7 @@ prefix = '/api' if config.DEV_MODE else None
 
 api = Blueprint('api', host=host, url_prefix=prefix)
 
+
 @api.post('/hooks/github')
 async def upgrade(request):
     if not validate_github_payload(request):
@@ -32,7 +33,7 @@ async def index(request):
             if route in ['/', '/api/']:
                 continue
             endpoints.add(route)
-    
+
     resp = {'success': True, 'endpoints': list(endpoints)}
 
     return response.text(json.dumps(resp, indent=4))

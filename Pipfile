@@ -11,6 +11,7 @@ python-box = "*"
 motor = "*"
 python-decouple = "*"
 dnspython = "*"
+"flake8" = "*"
 
 [dev-packages]
 
