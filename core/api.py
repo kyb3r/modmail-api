@@ -28,13 +28,12 @@ async def index(request):
 
     return response.text(json.dumps(resp, indent=4))
 
-@api.post('/hooks/github')
+@api.post('/webhooks/github')
 async def upgrade(request):
     if not validate_github_payload(request):
         return response.text('fuck off', 401)  # not sent by github
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
-
 
 async def restart_later(app):
     await log_server_update(app)
