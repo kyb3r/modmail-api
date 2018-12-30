@@ -1,7 +1,7 @@
 from sanic import Blueprint, response
 from core import config
 
-
+domain = config.DOMAIN
 host = None if config.DEV_MODE else f'logs.{domain}'
 prefix = '/logs/' if config.DEV_MODE else '/'
 
