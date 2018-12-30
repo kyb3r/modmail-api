@@ -4,8 +4,6 @@ from sanic import Blueprint, response
 
 from utils.github import Github
 from core import config
-from .utils import validate_github_payload
-from .logs import log_server_stop, log_server_update, log_message
 
 domain = config.DOMAIN
 
@@ -36,18 +34,18 @@ async def update_modmail_data(request):
     data = request.json
 
     valid_keys = (
-        'guild_id', 'guild_name', 'member_count', 
+        'guild_id', 'guild_name', 'member_count',
         'uptime', 'version', 'bot_id', 'bot_name'
-        )
+    )
 
     if any(k not in data for k in valid_keys):
         return response.json({'message': 'invalid payload'})
-    
+
     await request.app.db.users.update_one(
-        {'bot_id': data['bot_id']}, 
-        {'$set': data}, 
+        {'bot_id': data['bot_id']},
+        {'$set': data},
         upsert=True
-        )
+    )
 
     return response.json({'success': 'true'})
 
@@ -60,14 +58,15 @@ async def modmail_github_user(request):
     else:
         user = await Github.login(request.app, user['access_token'])
         return response.json({
-            'error': False, 
-            'message': 'User data retrieved.', 
+            'error': False,
+            'message': 'User data retrieved.',
             'user': {
-                'username': user.username, 
-                'avatar_url': user.avatar_url, 
+                'username': user.username,
+                'avatar_url': user.avatar_url,
                 'url': user.url
             }
         })
+
 
 @modmail.get('/github/logout')
 async def github_logout(request):
@@ -78,11 +77,11 @@ async def github_logout(request):
         await request.app.db.oauth.find_one_and_delete({'type': 'github', '_id': request.token})
         user = await Github.login(request.app, user['access_token'])
         return response.json({
-            'error': False, 
+            'error': False,
             'message': 'User logged out.',
             'user': {
-                'username': user.username, 
-                'avatar_url': user.avatar_url, 
+                'username': user.username,
+                'avatar_url': user.avatar_url,
                 'url': user.url
             }
         })
@@ -97,11 +96,11 @@ async def modmail_github_check(request):
         user = await Github.login(request.app, user['access_token'])
         data = await user.update_repository()
         return response.json({
-            'error': False, 
-            'message': 'Updated modmail.', 
+            'error': False,
+            'message': 'Updated modmail.',
             'user': {
-                'username': user.username, 
-                'avatar_url': user.avatar_url, 
+                'username': user.username,
+                'avatar_url': user.avatar_url,
                 'url': user.url
             },
             'data': data
@@ -123,10 +122,10 @@ async def modmail_github_callback(request):
         data = parse_qs(await resp.text())
         try:
             await request.app.db.oauth.insert_one({
-                'type': 'github', 
-                '_id': request.raw_args['token'], 
+                'type': 'github',
+                '_id': request.raw_args['token'],
                 'access_token': data['access_token'][0]
-                })
+            })
         except DuplicateKeyError:
             return response.redirect(url + '/already-logged-in')
         else:

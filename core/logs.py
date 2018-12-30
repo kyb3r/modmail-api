@@ -4,10 +4,12 @@ import os
 
 from core import config
 
+
 class Color:
     green = 0x2ecc71
     red = 0xe74c3c
     orange = 0xe67e22
+
 
 def log_server_start(app):
     em = dhooks.Embed(color=Color.green)
@@ -24,11 +26,13 @@ def log_server_start(app):
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {config.DOMAIN}')
     return app.webhook.send(embeds=[em])
 
+
 def log_server_stop(app):
     em = dhooks.Embed(color=Color.red)
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {config.DOMAIN}')
     em.set_author('[INFO] Server Stopped')
     return app.webhook.send(embeds=[em])
+
 
 def log_server_update(app):
     em = dhooks.Embed(color=Color.orange)
@@ -36,12 +40,14 @@ def log_server_update(app):
     em.set_author('[INFO] Server updating and restarting.')
     return app.webhook.send(embeds=[em])
 
+
 def log_server_error(app, excstr):
     em = dhooks.Embed(color=Color.red)
     em.set_author('[ERROR] Exception occured on server')
     em.description = f'```py\n{excstr}```'
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
     return app.webhook.send(embeds=[em])
+
 
 def log_message(app, message):
     em = dhooks.Embed(color=Color.orange)

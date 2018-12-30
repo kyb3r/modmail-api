@@ -19,6 +19,7 @@ app.blueprint(core.modmail)
 
 app.static('/static', './static')
 
+
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
@@ -57,18 +58,21 @@ async def on_error(request, exception):
             print(excstr)
 
         if len(excstr) > 1000:
-            excstr = excstr[:1000] 
+            excstr = excstr[:1000]
 
         app.add_task(core.log_server_error(app, excstr))
     return response.text('something went wrong xd', status=500)
+
 
 @app.get('/', host=config.DOMAIN)
 async def index(request):
     return await response.file('static/index.html')
 
+
 @app.get('/generative-artwork', host=config.DOMAIN)
 async def genetics(request):
     return await response.file('static/generative.html')
+
 
 @app.get('/logged-in')
 async def logged_in(request):
@@ -79,6 +83,7 @@ async def logged_in(request):
             message='You can now go back to discord and use the `<code>update</code>` command.'
         )
     return response.html(html)
+
 
 @app.get('/already-logged-in')
 async def already_logged_in(request):
