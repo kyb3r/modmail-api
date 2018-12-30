@@ -62,13 +62,9 @@ async def on_error(request, exception):
         app.add_task(core.log_server_error(app, excstr))
     return response.text('something went wrong xd', status=500)
 
-@app.get('/', host=config.DOMAIN)
+@app.get('/')
 async def index(request):
     return await response.file('static/index.html')
-
-@app.get('/generative-artwork', host=config.DOMAIN)
-async def genetics(request):
-    return await response.file('static/generative.html')
 
 @app.get('/logged-in')
 async def logged_in(request):
