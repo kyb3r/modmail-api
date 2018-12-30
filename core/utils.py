@@ -21,7 +21,7 @@ def log_server_start(app):
         revision = '\n'.join(os.popen(cmd).read().strip().splitlines()[:3])
         em.add_field('Latest changes', revision, inline=False)
         em.add_field('Live at', url, inline=False)
-        em.add_field('Github', 'https://kybr.tk/github')
+        em.add_field('Github', 'https://github.com/kyb3r/webserver')
 
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {config.DOMAIN}')
     return app.webhook.send(embeds=[em])
@@ -32,13 +32,11 @@ def log_server_stop(app):
     em.set_author('[INFO] Server Stopped')
     return app.webhook.send(embeds=[em])
 
-
 def log_server_update(app):
     em = dhooks.Embed(color=Color.orange)
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {config.DOMAIN}')
     em.set_author('[INFO] Server updating and restarting.')
     return app.webhook.send(embeds=[em])
-
 
 def log_server_error(app, excstr):
     em = dhooks.Embed(color=Color.red)
@@ -47,15 +45,12 @@ def log_server_error(app, excstr):
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
     return app.webhook.send(embeds=[em])
 
-
 def log_message(app, message):
     em = dhooks.Embed(color=Color.orange)
     em.set_author('[INFO] Message')
     em.description = f'```\n{message}```'
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
     return app.webhook.send(embeds=[em])
-
-
 
 def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
     # Handle the common case first for performance reasons.
@@ -65,7 +60,6 @@ def fbytes(s, encoding='utf-8', strings_only=False, errors='strict'):
         return bytes(s)
     else:
         return s.encode(encoding, errors)
-
 
 def validate_github_payload(request):
     if not request.headers.get('X-Hub-Signature'):
