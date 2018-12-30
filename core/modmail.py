@@ -8,12 +8,12 @@ from core import config
 domain = config.DOMAIN
 
 host = None if config.DEV_MODE else f'api.{domain}'
-prefix = '/api/modmail' if config.DEV_MODE else '/modmail'
+prefix = '/api' if config.DEV_MODE else None
 
 modmail = Blueprint('modmail', host=host, url_prefix=prefix)
 
 
-@modmail.get('/')
+@modmail.get('/metadata')
 async def get_modmail_info(request):
     app = request.app
 
@@ -29,7 +29,7 @@ async def get_modmail_info(request):
     return response.json(data)
 
 
-@modmail.post('/')
+@modmail.post('/metadata')
 async def update_modmail_data(request):
     data = request.json
 

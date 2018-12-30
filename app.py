@@ -16,6 +16,7 @@ app.cfg = config
 app.blueprint(core.api)
 app.blueprint(core.rd)
 app.blueprint(core.modmail)
+app.blueprint(core.logs)
 
 app.static('/static', './static')
 
@@ -67,6 +68,7 @@ async def on_error(request, exception):
 async def index(request):
     return await response.file('static/index.html')
 
+# deprecated
 @app.get('/logged-in')
 async def logged_in(request):
     username = request.raw_args.get('username', 'there')
@@ -77,6 +79,7 @@ async def logged_in(request):
         )
     return response.html(html)
 
+# deprecated
 @app.get('/already-logged-in')
 async def already_logged_in(request):
     with open('static/template.html') as f:
@@ -85,6 +88,15 @@ async def already_logged_in(request):
             message='Please use the `<code>github logout</code>` command and logout first.'
         )
     return response.html(html)
+
+@app.route('/modmail', host='api.kybr.tk', methods=['GET', 'POST'])
+async def deprecated(request):
+    '''Keep old url users working'''
+    if request.method == 'POST':
+        await app.session.post('https//api.modmail.tk/metadata', json=request.json)
+        return response.json({'sucess': True})
+    else:
+        return response.redirect('https://api.modmail.tk/metadata')
 
 if __name__ == '__main__':
     app.run(host=config.HOST, port=config.PORT)
