@@ -19,7 +19,7 @@ async def index(request):
 
     for name, (route, handler) in request.app.router.routes_names.items():
         if name.startswith('api.') or name.startswith('modmail.') or route.startswith('api.'):
-            route = route.replace('api.kybr.tk', '')
+            route = route.replace('api.modmail.tk', '')
             if route in ['/', '/api/']:
                 continue
             endpoints.add(route)
