@@ -6,7 +6,7 @@ from utils.github import Github
 from core import config
 
 host = 'api.kybr.tk'
-prefix = '/api/modmail'
+prefix = '/modmail'
 
 deprecated = Blueprint('deprecated', host=host, url_prefix=prefix)
 
