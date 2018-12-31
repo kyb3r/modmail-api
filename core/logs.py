@@ -17,7 +17,7 @@ class LogEntry:
         self.key = data['key']
         self.open = data['open']
         self.created_at = dateutil.parser.parse(data['created_at'])
-        self.closed_at = dateutil.parser.parse(data['closed_at'])
+        self.closed_at = dateutil.parser.parse(data['closed_at']) if not self.open else None
         self.channel_id = int(data['channel_id'])
         self.guild_id = int(data['guild_id'])
         self.creator = User(data['creator'])
