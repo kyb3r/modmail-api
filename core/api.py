@@ -3,6 +3,7 @@ import secrets
 import json
 import os
 
+from datetime import datetime
 from sanic import Blueprint, response
 from sanic_cors import CORS
 from pymongo.errors import DuplicateKeyError
@@ -50,80 +51,91 @@ async def get_log_url(request, auth_info):
     # payload should have discord_uid, channel_id, guild_id
     user_id = auth_info['user_id']
     while True:
-        key = secrets.token_hex(4)
-        if key not in auth_info['logs']:
+        key = secrets.token_hex(6)
+        key_exists = await request.app.db.api.find_one({'logs.key': key})
+        if not key_exists:
             log = await request.app.db.api.find_one_and_update(
                 {'user_id': user_id},
-                {'$set': {f'logs.{key}': {
-                    'github_uid': user_id,
-                    'discord_uid': request.json['discord_uid'],
+                {'$set': {f"logs.{request.json['channel_id']}": {
+                    'key': key,
+                    'open': True,
+                    'created_at': str(datetime.utcnow()),
+                    'closed_at': None,
+                    'user_id': user_id,
                     'channel_id': request.json['channel_id'],
                     'guild_id': request.json['guild_id'],
-                    'content': [request.json['content']]
+                    'creator': request.json['creator'],
+                    'recipient': request.json['recipient'],
+                    'closer': None,
+                    'messages': [],
                 }}}
             )
             return response.text(f'https://logs.modmail.tk/{user_id}/{key}')
 
-# GET - Get log dat
-# POST - Replace content
-# PATCH - Append content
-# DELETE - Delete log
-@api.get('/logs/key/<key>')
+@api.get('/logs/user/<user_id>')
 @auth_required()
-async def get_log_data(request, auth_info, key):
+async def get_logs_user(request, auth_info, user_id):
+    user_logs = []
+    for i in auth_info['logs']:
+        log = auth_info['logs'][i]
+        if log['recipient']['id'] == user_id:
+            user_logs.append(log)
+    return response.json(user_logs)
+
+@api.get('/logs/<channel_id>')
+@auth_required()
+async def get_log_data(request, auth_info, channel_id):
     """Get log data"""
     user_id = auth_info['user_id']
-    if key in auth_info['logs']:
-        return auth_info['logs'][key]
+    if channel_id in auth_info['logs']:
+        return auth_info['logs'][channel_id]
     else:
         return response.text('Not Found', status=404)
                 
-@api.post('/logs/key/<key>')
+@api.post('/logs/<channel_id>')
 @auth_required()
-async def replace_log_content(request, auth_info, key):
+async def post_log(request, auth_info, channel_id):
     """Replaces the content"""
-    if not isintance(request.json['content'], list):
-        return respone.json({'message': 'content has to be a  list'}, status=400)
-
     user_id = auth_info['user_id']
-    if key in auth_info['logs']:
+    if channel_id in auth_info['logs']:
         log = await request.app.db.api.find_one_and_update(
             {'user_id': user_id},
-            {'$set': {f'logs.{key}.content': request.json['content']}},
+            {'$set': {f'logs.{channel_id}.{i}': request.json[i] for i in request.json}},
             return_document=ReturnDocument.AFTER
         )
-        return response.json(log['logs'][key])
+        return response.json(log['logs'][channel_id])
     else:
         return response.text('Not Found', status=404)
 
-@api.patch('/logs/key/<key>')
+@api.patch('/logs/<channel_id>')
 @auth_required()
-async def patch_log_coontent(request, key, auth_info):
+async def patch_log_content(request, auth_info, channel_id):
     """Appends the content"""
     user_id = auth_info['user_id']
-    if key in auth_info['logs']:
+
+    if channel_id in auth_info['logs']:
         log = await request.app.db.api.find_one_and_update(
             {'user_id': user_id},
-            {'$push': {f'logs.{key}.content': request.json['content']}},
+            {'$push': {f'logs.{channel_id}.messages': request.json['payload']}},
             return_document=ReturnDocument.AFTER
         )
-        return response.json(log['logs'][key])
+        return response.json(log['logs'][channel_id])
     else:
         return response.text('Not Found', status=404)
                 
 
-@api.delete('/logs/key/<key>')
+@api.delete('/logs/<channel_id>')
 @auth_required()
-async def delete_log(request, key, auth_info):
+async def delete_log(request, auth_info, channel_id):
     """Delete log"""
     user_id = auth_info['user_id']
-    if key in auth_info['logs']:
+    if channel_id in auth_info['logs']:
         log = await request.app.db.api.find_one_and_update(
             {'user_id': user_id},
-            {'$unset': {f'logs.{key}'}},
+            {'$unset': {f'logs.{channel_id}'}},
             return_document=ReturnDocument.AFTER
         )
-        return response.json(log['logs'][key])
+        return response.json(log['logs'][channel_id])
     else:
         return response.text('Not Found', status=404)
 

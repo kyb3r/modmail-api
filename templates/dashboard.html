@@ -31,7 +31,7 @@ function regenerate() {
     }
 
     fetch('{{ config.API_BASE }}/token', params)
-        .then(resp => {return resp.json()})
+        .then(resp => resp.json())
         .then(data => {
             elem.innerHTML = data.token;
         })

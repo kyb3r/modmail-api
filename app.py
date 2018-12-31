@@ -63,7 +63,7 @@ async def aexit(app, loop):
     await app.session.close()
 
 @app.exception(SanicException)
-async def sanic_exception(request, exception):
+def sanic_exception(request, exception):
     try:
         raise(exception)
     except:
