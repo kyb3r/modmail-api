@@ -105,7 +105,6 @@ async def login(request):
         'redirect_uri': config.GITHUB_REDIRECT_URL,
     }
     url = config.GITHUB_OAUTH_URL + urlencode(data)
-    await core.log_message(app, url)
     return response.redirect(url)
 
 @app.get('/logout')
