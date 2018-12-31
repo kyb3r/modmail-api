@@ -72,7 +72,7 @@ class User:
         return f'{self.name}#{self.discriminator}'
     
     def __eq__(self, other):
-        return self.id == other.id
+        return self.id == other.id and self.mod is other.mod
 
 
 class Message:
