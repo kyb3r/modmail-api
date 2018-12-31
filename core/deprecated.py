@@ -71,10 +71,10 @@ async def modmail_github_check(request):
 async def modmail_github_callback(request):
 
     code = request.raw_args['code']
-    
+
     params = {
         'client_id': 'e54e4ff0f234ee9f22aa',
-        'client_secret': config.GITHUB_SECRET,
+        'client_secret': config.OLD_GITHUB_SECRET,
         'code': code
     }
 
