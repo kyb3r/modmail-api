@@ -104,7 +104,9 @@ async def login(request):
         'scope': 'public_repo',
         'redirect_uri': config.GITHUB_REDIRECT_URL,
     }
-    return response.redirect(config.GITHUB_OAUTH_URL + urlencode(data))
+    url = config.GITHUB_OAUTH_URL + urlencode(data)
+    await core.log_message(app, url)
+    return response.redirect(url)
 
 @app.get('/logout')
 @core.login_required()
@@ -118,7 +120,7 @@ async def callback(request):
         code = request.raw_args['code']
     except KeyError:
         # in the case of invalid callback like someoone played with the url
-        return response.text('error: ' + request.raw_args['errorx'])                                    
+        return response.text('error: ' + request.raw_args['error'])                                    
     
     params = {
         'client_id': config.GITHUB_CLIENT_ID,
