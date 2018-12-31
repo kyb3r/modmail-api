@@ -15,6 +15,7 @@ dnspython = "*"
 sanic-session = "*"
 pyjwt = "*"
 sanic-cors = "*"
+python-dateutil = "*"
 
 [dev-packages]
 

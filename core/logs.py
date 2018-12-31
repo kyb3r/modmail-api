@@ -1,6 +1,7 @@
 from datetime import datetime
 from sanic import Blueprint, response
 from sanic.exceptions import abort
+import dateutil.parser
 
 from core import config
 
@@ -15,8 +16,8 @@ class LogEntry:
     def __init__(self, data):
         self.key = data['key']
         self.open = data['open']
-        self.created_at = datetime.fromisoformat(data['created_at'])
-        self.closed_at = datetime.fromisoformat(data['closed_at'])
+        self.created_at = dateutil.parser.parse(data['created_at'])
+        self.closed_at = dateutil.parser.parse(data['closed_at'])
         self.channel_id = int(data['channel_id'])
         self.guild_id = int(data['guild_id'])
         self.creator = User(data['creator'])
@@ -74,7 +75,7 @@ class User:
 class Message:
     def __init__(self, data):
         self.id = int(data['message_id'])
-        self.created_at = datetime.fromisoformat(data['timestamp'])
+        self.created_at = dateutil.parser.parse(data['timestamp'])
         self.content = data['content']
         self.attachments = data['attachments']
         self.author = User(data['author'])
