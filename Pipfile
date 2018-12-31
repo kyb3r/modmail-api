@@ -12,6 +12,7 @@ motor = "*"
 python-decouple = "*"
 dnspython = "*"
 "flake8" = "*"
+sanic-session = "*"
 
 [dev-packages]
 
