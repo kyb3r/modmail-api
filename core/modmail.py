@@ -2,15 +2,13 @@ from urllib.parse import parse_qs
 from pymongo.errors import DuplicateKeyError
 from sanic import Blueprint, response
 
-from utils.github import Github
 from core import config
+from .utils import Github
 
 domain = config.DOMAIN
+host = f'api.{domain}'
 
-host = None if config.DEV_MODE else f'api.{domain}'
-prefix = '/api' if config.DEV_MODE else None
-
-modmail = Blueprint('modmail', host=host, url_prefix=prefix)
+modmail = Blueprint('modmail', host=host)
 
 
 @modmail.get('/metadata')
@@ -111,6 +109,7 @@ async def modmail_github_check(request):
 async def modmail_github_callback(request):
 
     code = request.raw_args['code']
+    
     params = {
         'client_id': 'e54e4ff0f234ee9f22aa',
         'client_secret': config.GITHUB_SECRET,

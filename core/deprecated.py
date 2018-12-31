@@ -2,14 +2,13 @@ from urllib.parse import parse_qs
 from pymongo.errors import DuplicateKeyError
 from sanic import Blueprint, response
 
-from utils.github import Github
 from core import config
+from .utils import Github
 
 host = 'api.kybr.tk'
 prefix = '/modmail'
 
 deprecated = Blueprint('deprecated', host=host, url_prefix=prefix)
-
 
 @deprecated.get('/github/userinfo')
 async def modmail_github_user(request):

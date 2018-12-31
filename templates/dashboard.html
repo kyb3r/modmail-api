@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<main>
+
+<div class="vertical-align-middle center container">
+    <div class="card-panel hoverable" id='main-card'>
+        <h1 class="animated jackInTheBox header" id='dashbots'>{{ title }}</h1>
+        <h5 class="header col s12 light grey-text">{{ message }}</h5>
+        <br>
+        <div class="row center">
+            <a onclick="copy()" id="my-button" class="btn waves-effect">copy</a>
+            <br>
+        </div>
+    </div>
+</div>
+
+</main>
+
+<script>
+    
+function copy() {
+  /* Get the text field */
+  var copyText = document.getElementById("token").innerHTML;
+
+  const el = document.createElement('textarea');
+  el.value = copyText;
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand('copy');
+  document.body.removeChild(el);
+}
+
+</script>
+
+{% endblock %}

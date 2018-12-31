@@ -8,10 +8,9 @@ from .utils import validate_github_payload, log_server_stop, log_server_update
 
 
 domain = config.DOMAIN
-host = None if config.DEV_MODE else f'api.{domain}'
-prefix = '/api' if config.DEV_MODE else None
+host = f'api.{domain}'
 
-api = Blueprint('api', host=host, url_prefix=prefix)
+api = Blueprint('api', host=host)
 
 @api.get('/')
 async def index(request):
