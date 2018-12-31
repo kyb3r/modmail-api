@@ -19,6 +19,7 @@ app.blueprint(core.api)
 app.blueprint(core.rd)
 app.blueprint(core.modmail)
 app.blueprint(core.logs)
+app.blueprint(core.deprecated)
 
 app.static('/static', './static')
 
