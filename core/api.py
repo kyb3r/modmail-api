@@ -15,6 +15,7 @@ domain = config.DOMAIN
 host = f'api.{domain}'
 
 api = Blueprint('api', host=host)
+
 CORS(api, automatic_options=True)
 
 @api.get('/')
@@ -188,13 +189,12 @@ async def regen_token(request, auth_info):
 # # github stuff?yes # i'll put it aside for now 
 
 @api.get('/github/userinfo')
-async def modmail_github_user(request):
-    # TODO: use new stuff
-    user = await request.app.db.oauth.find_one({'type': 'github', '_id': request.token})
+@auth_required()
+async def modmail_github_user(request, user):
     if user is None:
         return response.json({'error': True, 'message': 'Unable to find user. Please go through OAuth.'}, status=403)
     else:
-        user = await Github.login(request.app, user['access_token'])
+        user = await Github.login(request.app, user['github_access_token'])
         return response.json({
             'error': False,
             'message': 'User data retrieved.',

@@ -55,7 +55,6 @@ class Color:
 class Github:
     head = 'https://api.github.com/repos/kyb3r/modmail/git/refs/heads/master'
     merge_url = 'https://api.github.com/repos/{username}/modmail/merges'
-    commit_url = 'https://api.github.com/repos/kyb3r/modmail/commits'
 
     def __init__(self, app, access_token=None, username=None):
         self.app = app
@@ -68,11 +67,6 @@ class Github:
         self.headers = None
         if self.access_token:
             self.headers = {'Authorization': 'token ' + str(access_token)}
-
-    async def get_latest_commits(self, limit=3):
-        resp = await self.request(self.commit_url)
-        for index in range(limit):
-            yield resp[index]
 
     async def update_repository(self, sha=None):
         if sha is None:
