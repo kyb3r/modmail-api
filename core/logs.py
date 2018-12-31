@@ -26,12 +26,13 @@ class LogEntry:
         self.messages = [Message(m) for m in data['messages']]
 
     def __str__(self):
-        if self.creator == self.recipient:
-            out = f'[R] {self.creator} created a modmail thread. \n'
-        else:
-            out = f'[M] {self.creator} created a thread with [R] {self.recipient}\n'
+        out = f"Thread created at {self.created_at.strftime('%d %b %Y - %H:%M UTC')}\n"
 
-        out += f"Thread created at {self.created_at.strftime('%d %b %Y - %H:%M UTC')}\n"
+        if self.creator == self.recipient:
+            out += f'[R] {self.creator} created a modmail thread. \n'
+        else:
+            out += f'[M] {self.creator} created a thread with [R] {self.recipient}\n'
+
         out += '----------------' * 3 + '\n'
 
         if self.messages:
