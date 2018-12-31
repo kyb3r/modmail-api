@@ -13,3 +13,5 @@ GITHUB_SECRET = config('dev_github_secret', default=None) if DEV_MODE else confi
 GITHUB_CLIENT_ID = config('dev_github_client_id', default=None) if DEV_MODE else config('github_client_id') 
 GITHUB_OAUTH_URL = 'https://github.com/login/oauth/authorize?'
 GITHUB_REDIRECT_URL = f'http://{DOMAIN}/callback' if DEV_MODE else f'https://{DOMAIN}/callback'
+
+BASE = f'http://{DOMAIN}' if DEV_MODE else f'https://{DOMAIN}'
