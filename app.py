@@ -2,6 +2,7 @@ import traceback
 
 from sanic import Sanic, response
 from sanic.exceptions import SanicException
+from sanic_session import Session
 
 import aiohttp
 import dhooks
@@ -11,6 +12,7 @@ import core
 from core import config
 
 app = Sanic(__name__)
+Session(app)
 app.cfg = config
 
 app.blueprint(core.api)
@@ -28,7 +30,7 @@ async def init(app, loop):
     app.session = aiohttp.ClientSession(loop=loop)
     app.webhook = dhooks.Webhook.Async(config.WEBHOOK_URL)
     app.webhook.avatar_url = 'http://icons.iconarchive.com/icons/graphicloads/100-flat/256/analytics-icon.png'
-    app.webhook.username = 'kybr.tk'
+    app.webhook.username = 'modmail.tk'
     app.db = AsyncIOMotorClient(config.MONGO).modmail
 
     await core.log_server_start(app)
@@ -67,9 +69,6 @@ async def on_error(request, exception):
 @app.get('/')
 async def index(request):
     return await response.file('static/index.html')
-
-@app.get('/login')
-async def login(request):
 
 # deprecated
 @app.get('/logged-in')
