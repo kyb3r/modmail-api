@@ -16,15 +16,19 @@ api = Blueprint('api', host=host, url_prefix=prefix)
 @api.get('/')
 async def index(request):
     endpoints = set()
+    deprecated = set()
 
     for name, (route, handler) in request.app.router.routes_names.items():
         if name.startswith('api.') or name.startswith('modmail.') or route.startswith('api.'):
             route = route.replace('api.modmail.tk', '')
             if route in ['/', '/api/']:
                 continue
-            endpoints.add(route)
+            if route.startswith('api.kybr.tk'):
+                deprecated.add(route)
+            else:
+                endpoints.add(route)
 
-    resp = {'success': True, 'endpoints': list(endpoints)}
+    resp = {'success': True, 'endpoints': list(endpoints), 'deprecated': list(deprecated)}
 
     return response.text(json.dumps(resp, indent=4))
 
