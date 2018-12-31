@@ -53,8 +53,12 @@ class Color:
     orange = 0xe67e22
 
 class Github:
-    head = 'https://api.github.com/repos/kyb3r/modmail/git/refs/heads/master'
-    merge_url = 'https://api.github.com/repos/{username}/modmail/merges'
+    BASE = 'https://api.github.com'
+    REPO = BASE + '/repos/kyb3r/modmail'
+    head = REPO + '/git/refs/heads/master'
+    merge_url = '/repos/{username}/modmail/merges'
+    fork_url = REPO + '/forks'
+    star_url = BASE + '/user/starred/kyb3r/modmail'
 
     def __init__(self, app, access_token=None, username=None):
         self.app = app
@@ -85,8 +89,15 @@ class Github:
         if isinstance(resp, dict):
             return resp
 
-    async def request(self, url, method='GET', payload=None):
-        async with self.session.request(method, url, headers=self.headers, json=payload) as resp:
+    async def fork_repository(self):
+        await self.session.request(fork_url, method='POST')
+
+    async def star_repository(self):
+        await self.session.request(star_url, method='PUT', headers={'Content-Length':  0})
+
+    async def request(self, url, method='GET', payload=None, headers={}):
+        headers.update(self.headers)
+        async with self.session.request(method, url, headers=headers, json=payload) as resp:
             try:
                 return await resp.json()
             except:

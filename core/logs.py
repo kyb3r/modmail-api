@@ -34,23 +34,25 @@ class LogEntry:
         out += f"Thread created at {self.created_at.strftime('%d %b %Y - %H:%M UTC')}\n"
         out += '----------------' * 3 + '\n'
 
-        current_author = self.messages[0].author
+        if self.messages:
+            current_author = self.messages[0].author
 
-        for index, message in enumerate(self.messages):
-            author = message.author
-            base = message.created_at.strftime('%d/%m %H:%M') + (' [M] ' if author.mod else ' [R] ')
-            base += f'{author}: '
-            base += message.content + '\n'
-            for attachment in message.attachments:
-                base += 'Attachment: ' + attachment + '\n'
-            out += base
+            for index, message in enumerate(self.messages):
+                author = message.author
+                base = message.created_at.strftime('%d/%m %H:%M') + (' [M] ' if author.mod else ' [R] ')
+                base += f'{author}: '
+                base += message.content + '\n'
+                for attachment in message.attachments:
+                    base += 'Attachment: ' + attachment + '\n'
+                out += base
 
-            if current_author != message.author and not index == len(self.messages) - 1:
-                out += '----------------' * 2 + '\n'
-                current_author = author
+                if current_author != message.author and not index == len(self.messages) - 1:
+                    out += '----------------' * 2 + '\n'
+                    current_author = author
 
         if not self.open:
-            out += '----------------' * 3 + '\n'            
+            if self.messages:  # only add if at least 1 message was sent
+                out += '----------------' * 3 + '\n'            
             out += f'[M] {self.closer} closed the modmail thread. \n'
             out += f"Thread closed at {self.closed_at.strftime('%d %b %Y - %H:%M UTC')} \n"
                     
