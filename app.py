@@ -101,8 +101,7 @@ async def login(request):
 
     data = {
         'client_id': config.GITHUB_CLIENT_ID,
-        'scope': 'public_repo',
-        'redirect_uri': config.GITHUB_REDIRECT_URL,
+        'scope': 'public_repo'
     }
     url = config.GITHUB_OAUTH_URL + urlencode(data)
     return response.redirect(url)
