@@ -24,7 +24,6 @@ app.cfg = config
 Session(app, interface=InMemorySessionInterface(domain=config.DOMAIN))
 
 app.blueprint(core.api)
-app.blueprint(core.modmail)
 app.blueprint(core.logs)
 app.blueprint(core.dashboard)
 
@@ -49,7 +48,6 @@ app.render_template = render_template
 @app.listener('before_server_start')
 async def init(app, loop):
     '''Initialize app config, database and send the status discord webhook payload.'''
-    print('http://'+config.DOMAIN)
     app.password = config.PASSWORD
     app.session = aiohttp.ClientSession(loop=loop)
     app.webhook = dhooks.Webhook.Async(config.WEBHOOK_URL)
@@ -84,7 +82,7 @@ async def on_error(request, exception):
         if len(excstr) > 1000:
             excstr = excstr[:1000]
 
-        app.add_task(core.log_server_error(app, excstr))
+        app.add_task(core.log_server_error(app, request, excstr))
     return response.text('something went wrong xd', status=500)
 
 @app.get('/')

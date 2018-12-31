@@ -14,6 +14,7 @@ dnspython = "*"
 "flake8" = "*"
 sanic-session = "*"
 pyjwt = "*"
+sanic-cors = "*"
 
 [dev-packages]
 

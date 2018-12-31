@@ -10,7 +10,7 @@
         <br>
         <div class="row center">
             <a onclick="copy()" id="my-button" class="btn waves-effect">copy</a>
-            <br>
+            <a onclick="regenerate()" id="my-button" class="btn waves-effect">regenerate</a>
         </div>
     </div>
 </div>
@@ -18,10 +18,29 @@
 </main>
 
 <script>
-    
+
+function regenerate() {
+    let elem = document.getElementById("token")
+    let token = elem.innerHTML
+
+    params = {
+        method: 'PATCH',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    }
+
+    fetch('http://api.{{ config.DOMAIN }}/token', params)
+        .then(resp => {return resp.json()})
+        .then(data => {
+            elem.innerHTML = data.token;
+        })
+
+}
+
 function copy() {
   /* Get the text field */
-  var copyText = document.getElementById("token").innerHTML;
+  let copyText = document.getElementById("token").innerHTML;
 
   const el = document.createElement('textarea');
   el.value = copyText;

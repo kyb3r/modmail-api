@@ -10,9 +10,18 @@ from core import config
 from sanic.exceptions import abort
 from sanic import response
 
-async def validate_token(request):
-    exists = await request.app.db.users.find_one({'token': request.token})
-    return exists is not None
+def auth_required():
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(request, *args, **kwargs):
+            if not request.token:
+                abort(401, 'Invalid token')
+            document = await request.app.db.api.find_one({'token': request.token})
+            if not document:
+                abort(401, 'Invalid token')
+            return await func(request, document, *args, **kwargs)
+        return wrapper
+    return decorator
 
 def login_required():
     def decorator(func):
@@ -93,7 +102,6 @@ class Github:
     async def login(cls, bot, access_token):
         self = cls(bot, access_token)
         resp = await self.request('https://api.github.com/user')
-        print(resp)
         self.username = resp['login']
         self.avatar_url = resp['avatar_url']
         self.url = resp['html_url']
@@ -128,10 +136,10 @@ def log_server_update(app):
     em.set_author('[INFO] Server updating and restarting.')
     return app.webhook.send(embeds=[em])
 
-def log_server_error(app, excstr):
+def log_server_error(app, requeust, excstr):
     em = dhooks.Embed(color=Color.red)
-    em.set_author('[ERROR] Exception occured on server')
-    em.description = f'```py\n{excstr}```'
+    em.set_author('[ERROR] Exception occured on server}')
+    em.description = f'{request.url}\n```py\n{excstr}```'
     em.set_footer(f'Hostname: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
     return app.webhook.send(embeds=[em])
 
