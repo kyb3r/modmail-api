@@ -96,6 +96,7 @@ class Github:
     async def login(cls, bot, access_token):
         self = cls(bot, access_token)
         resp = await self.request('https://api.github.com/user')
+        print(resp)
         self.username = resp['login']
         self.avatar_url = resp['avatar_url']
         self.url = resp['html_url']

@@ -51,16 +51,17 @@ async def get_log_url(request, auth_info):
     user_id = auth_info['user_id']
     while True:
         key = secrets.token_hex(4)
-        key_exists = await request.app.db.logs.find_one({'user_id': user_id, 'key': key})
-        if not key_exists:
-            await request.app.db.logs.insert_one({
-                'github_uid': user_id,
-                'key': key,
-                'discord_uid': request.json['discord_uid'],
-                'channel_id': request.json['channel_id'],
-                'guild_id': request.json['guild_id'],
-                'content': 'Log has to be closed first.'
-            })
+        if key not in auth_info['logs']:
+            log = await request.app.db.api.find_one_and_update(
+                {'user_id': user_id},
+                {'$set': {f'logs.{key}': {
+                    'github_uid': user_id,
+                    'discord_uid': request.json['discord_uid'],
+                    'channel_id': request.json['channel_id'],
+                    'guild_id': request.json['guild_id'],
+                    'content': [request.json['content']]
+                }}}
+            )
             return response.text(f'https://logs.modmail.tk/{user_id}/{key}')
 
 # GET - Get log dat
@@ -81,6 +82,9 @@ async def get_log_data(request, auth_info, key):
 @auth_required()
 async def replace_log_content(request, auth_info, key):
     """Replaces the content"""
+    if not isintance(request.json['content'], list):
+        return respone.json({'message': 'content has to be a  list'}, status=400)
+
     user_id = auth_info['user_id']
     if key in auth_info['logs']:
         log = await request.app.db.api.find_one_and_update(
@@ -100,7 +104,7 @@ async def patch_log_coontent(request, key, auth_info):
     if key in auth_info['logs']:
         log = await request.app.db.api.find_one_and_update(
             {'user_id': user_id},
-            {'$set': {f'logs.{key}.content': auth_info['logs'][key]['content'] + request.json['content']}},
+            {'$push': {f'logs.{key}.content': request.json['content']}},
             return_document=ReturnDocument.AFTER
         )
         return response.json(log['logs'][key])

@@ -139,11 +139,8 @@ async def callback(request):
     if exists:
         request['session']['user'] = user
         request['session']['token'] = document['token']
+        await app.db.api.update_one({'user_id': user.id}, {'$set': {'github_access_token': github_access_token}})
         return response.redirect('http://'+app.url_for('dashboard.index'))
-
-    payload = {
-        'sub': user.username,  # subject
-    }
 
     # Generate token
     token = secrets.token_hex(15)

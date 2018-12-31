@@ -14,7 +14,7 @@ async def getlogsfile(request, user_id, key):
     try:
         auth_info = await request.app.db.api.find_one({'user_id': int(user_id)})
         if key in auth_info['logs']:
-            return response.text(auth_info['logs'][key]['content'])
+            return response.json(auth_info['logs'][key]['content'])
         else:
             return response.text('Not Found', status=404)
     except TypeError:
