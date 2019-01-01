@@ -36,20 +36,22 @@ class LogEntry:
         out += '----------------' * 3 + '\n'
 
         if self.messages:
-            current_author = self.messages[0].author
-
             for index, message in enumerate(self.messages):
-                author = message.author
+                curr, next = message.author, self.messages[index+1 % len(self.messages)].author
+
+                author = curr
                 base = message.created_at.strftime('%d/%m %H:%M') + (' [M] ' if author.mod else ' [R] ')
-                base += f'{author}: '
-                base += message.content + '\n'
+                base += f'{author}: {message.content}\n'
                 for attachment in message.attachments:
                     base += 'Attachment: ' + attachment + '\n'
                 out += base
 
-                if current_author != message.author and not index == len(self.messages) - 1:
+                if curr != next:
                     out += '----------------' * 2 + '\n'
                     current_author = author
+                
+                if index + 1 == len(self.messages) - 1:
+                    break
 
         if not self.open:
             if self.messages:  # only add if at least 1 message was sent
