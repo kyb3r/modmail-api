@@ -152,7 +152,6 @@ async def update_config(request, auth_info):
     await request.app.db.api.update_one(
         {'user_id': user_id}, {'$set': {'config': request.json}, "$unset": unset}
         )
-    await 
     return response.json({'success': True})
 
 @api.get('/metadata')
