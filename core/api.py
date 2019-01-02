@@ -138,6 +138,20 @@ async def delete_log(request, auth_info, channel_id):
     else:
         return response.text('Not Found', status=404)
 
+@api.get('/config')
+@auth_required()
+async def get_config(request, auth_info):
+    '''Get config data'''
+    return response.json(auth_info['config'])
+
+@api.patch('/config')
+@auth_required()
+async def update_config(request, auth_info):
+    user_id = auth_info('user_id')
+    await request.app.db.update_one(
+        {'user_id': user_id}, {'$set': request.json}
+        )
+    return response.json({'success': True})
 
 @api.get('/metadata')
 async def get_modmail_info(request):
