@@ -56,7 +56,7 @@ class Github:
     BASE = 'https://api.github.com'
     REPO = BASE + '/repos/kyb3r/modmail'
     head = REPO + '/git/refs/heads/master'
-    merge_url = '/repos/{username}/modmail/merges'
+    merge_url = BASE + '/repos/{username}/modmail/merges'
     fork_url = REPO + '/forks'
     star_url = BASE + '/user/starred/kyb3r/modmail'
 
