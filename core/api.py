@@ -223,7 +223,7 @@ async def regen_token(request, auth_info):
 @api.get('/github/update')
 @auth_required()
 async def modmail_github_check(request, user):
-    user = await Github.login(request.app, user['access_token'])
+    user = await Github.login(request.app, user['github_access_token'])
     data = await user.update_repository()
     return response.json({
         'error': False,
