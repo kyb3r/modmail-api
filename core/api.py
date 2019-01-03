@@ -218,6 +218,22 @@ async def regen_token(request, auth_info):
 # # accept the metadata info in request.json
 # # github stuff?yes # i'll put it aside for now 
 
+@api.get('/github/update')
+@auth_required()
+async def modmail_github_check(request, user):
+    user = await Github.login(request.app, user['access_token'])
+    data = await user.update_repository()
+    return response.json({
+        'error': False,
+        'message': 'Updated modmail.',
+        'user': {
+            'username': user.username,
+            'avatar_url': user.avatar_url,
+            'url': user.url
+        },
+        'data': data
+    })
+
 @api.get('/github/userinfo')
 @auth_required()
 async def modmail_github_user(request, user):
