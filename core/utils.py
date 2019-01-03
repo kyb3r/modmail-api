@@ -57,7 +57,7 @@ class Github:
     REPO = BASE + '/repos/kyb3r/modmail'
     head = REPO + '/git/refs/heads/master'
     merge_url = '/repos/{username}/modmail/merges'
-    fork_url = REPO + '/forks'
+    self. = REPO + '/forks'
     star_url = BASE + '/user/starred/kyb3r/modmail'
 
     def __init__(self, app, access_token=None, username=None):
@@ -90,10 +90,10 @@ class Github:
             return resp
 
     async def fork_repository(self):
-        await self.session.request(fork_url, method='POST')
+        await self.session.request(self.fork_url, method='POST')
 
     async def star_repository(self):
-        await self.session.request(star_url, method='PUT', headers={'Content-Length':  0})
+        await self.session.request(self.star_url, method='PUT', headers={'Content-Length':  0})
 
     async def request(self, url, method='GET', payload=None, headers={}):
         headers.update(self.headers)
