@@ -7,9 +7,9 @@ rd = Blueprint('redirects')
 REDIRECTS = {
     'github': 'https://github.com/kyb3r',
     'discord': 'https://discord.gg/etJNHCQ',
-    'source': 'https://github.com/kyb3r/webserver'
+    'source': 'https://github.com/kyb3r/webserver',
+    'changelog': 'https://github.com/kyb3r/modmail/blob/modmail-api/CHANGELOG.md'
 }
-
 
 @rd.get('/<path>')
 async def redirects(request, path):
@@ -17,7 +17,6 @@ async def redirects(request, path):
     if not endpoint:
         abort(404)
     return response.redirect(endpoint)
-
 
 @rd.get('/<repo>', host=f'repo.{config.DOMAIN}')
 async def repo(request, repo):
