@@ -148,7 +148,7 @@ async def get_config(request, auth_info):
 @auth_required()
 async def update_config(request, auth_info):
     user_id = auth_info['user_id']
-    unset = {k: '' for k, v in request.json.items() if not v}
+    unset = {k: 1 for k, v in request.json.items() if not v}
     await request.app.db.api.update_one(
         {'user_id': user_id}, {'$set': {'config': request.json}, "$unset": unset}
         )
