@@ -8,7 +8,7 @@ REDIRECTS = {
     'github': 'https://github.com/kyb3r',
     'discord': 'https://discord.gg/etJNHCQ',
     'source': 'https://github.com/kyb3r/webserver',
-    'changelog': 'https://github.com/kyb3r/modmail/blob/modmail-api/CHANGELOG.md'
+    'changelog': 'https://github.com/kyb3r/modmail/blob/master/CHANGELOG.md'
 }
 
 @rd.get('/<path>')
