@@ -57,7 +57,7 @@ class Github:
     REPO = BASE + '/repos/kyb3r/modmail'
     head = REPO + '/git/refs/heads/master'
     merge_url = '/repos/{username}/modmail/merges'
-    self. = REPO + '/forks'
+    fork_url = REPO + '/forks'
     star_url = BASE + '/user/starred/kyb3r/modmail'
 
     def __init__(self, app, access_token=None, username=None):
