@@ -9,14 +9,21 @@
         <h5 class="header col s12 light grey-text">{{ message }}</h5>
         <br>
         <div class="row center">
-            <a onclick="copy()" id="my-button" class="btn waves-effect">copy</a>
-            <a onclick="regenerate()" id="my-button" class="btn waves-effect">regenerate</a>
+            <a onclick="copy()" class="btn waves-effect my-button">copy</a>
+            <a onclick="regenerate()" class="btn waves-effect my-button ">regenerate</a>
+            {% if not has_starred %}
+            <a onclick="star()" id="star-button" class="btn waves-effect my-button"><i class="material-icons middle">star</i></a>
+            {% else %}
+            {% endif %}
         </div>
     </div>
 </div>
 
 </main>
 
+{% endblock %}
+
+{% block scripts %}
 <script>
 
 function regenerate() {
@@ -34,8 +41,29 @@ function regenerate() {
         .then(resp => resp.json())
         .then(data => {
             elem.innerHTML = data.token;
+            M.toast({html: 'Regenerated token!'})
         })
 
+}
+
+function star() {
+    let elem = document.getElementById("token")
+    let token = elem.innerHTML
+
+    params = {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + token
+        }
+    }
+
+    fetch('{{ config.API_BASE }}/star', params)
+        .then(resp => {
+            M.toast({html: "Starred the repository!"})
+            let elem = document.getElementById("star-button")
+            console.log(elem)
+            elem.parentNode.removeChild(elem);
+        })
 }
 
 function copy() {
@@ -48,6 +76,7 @@ function copy() {
   el.select();
   document.execCommand('copy');
   document.body.removeChild(el);
+  M.toast({html: "Copied to clipboard!"})
 }
 
 </script>

@@ -11,7 +11,10 @@ async def index(request):
     username = user['username']
     data = await request.app.db.api.find_one({'user_id': user_id})
     token = data['token']
+    has_starred = await utils.Github(request.app, data['github_access_token']).has_starred()
+
     return request.app.render_template('dashboard',
-        title=f'Hey {username}',
-        message=f"<small>Token: <code id='token'>{token}</code></small>"
+        title=f'Hey there!',
+        message=f"<small>Token: <code id='token'>{token}</code></small>",
+        has_starred=has_starred
     )

@@ -35,12 +35,16 @@ body {
   background-color: #24272A;
 }
 
-#my-button {
+.btn {
   background-color: #7289DA;
 }
 
-#my-button:visited {
+.btn:visited {
   background-color: #7289DA;
+}
+
+.btn:hover {
+    background-color: rgb(64, 69, 75);
 }
 
 nav {

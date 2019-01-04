@@ -256,7 +256,8 @@ async def modmail_github_user(request, user):
 @api.put('/star')
 @auth_required()
 async def star_repo(request, auth_info):
-    await Github.login(request.app, auth_info['github_access_token']).star_repo()
+    user = await Github.login(request.app, auth_info['github_access_token'])
+    await user.star_repository()
     return response.text('', status=204)
 
 async def restart_later(app):

@@ -90,14 +90,20 @@ class Github:
             return resp
 
     async def fork_repository(self):
-        await self.session.request(self.fork_url, method='POST')
+        await self.request(self.fork_url, method='POST')
+    
+    async def has_starred(self):
+        resp = await self.request(self.star_url, return_response=True)
+        return resp.status == 204
 
     async def star_repository(self):
-        await self.session.request(self.star_url, method='PUT', headers={'Content-Length':  0})
+        await self.request(self.star_url, method='PUT', headers={'Content-Length':  '0'})
 
-    async def request(self, url, method='GET', payload=None, headers={}):
+    async def request(self, url, method='GET', payload=None, headers={}, return_response=False):
         headers.update(self.headers)
         async with self.session.request(method, url, headers=headers, json=payload) as resp:
+            if return_response:
+                return resp
             try:
                 return await resp.json()
             except:
