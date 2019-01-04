@@ -201,6 +201,11 @@ async def get_token_info(request, auth_info):
     auth_info.pop('_id')
     return response.json(auth_info)
 
+@api.get('/token/verify')
+@auth_required()
+async def verify_token(request, user):
+    return response.json({'success': True})
+
 @api.patch('/token')
 @auth_required()
 async def regen_token(request, auth_info):

@@ -10,15 +10,20 @@ from core import config
 from sanic.exceptions import abort
 from sanic import response
 
+
+
 def auth_required():
+    
+    unauthorized = response.json({'success': False, 'message': 'Invalid authorization.'}, status=401)
+
     def decorator(func):
         @wraps(func)
         async def wrapper(request, *args, **kwargs):
             if not request.token:
-                abort(401, 'Invalid token')
+                return unauthorized
             document = await request.app.db.api.find_one({'token': request.token})
             if not document:
-                abort(401, 'Invalid token')
+                return unauthorized
             return await func(request, document, *args, **kwargs)
         return wrapper
     return decorator
