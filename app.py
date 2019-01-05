@@ -3,6 +3,7 @@ import traceback
 import datetime
 import asyncio
 import secrets
+import socket
 
 from motor.motor_asyncio import AsyncIOMotorClient
 from jinja2 import Environment, PackageLoader
@@ -91,11 +92,11 @@ async def on_error(request, exception):
     if len(excstr) > 1800:
         excstr = excstr[:1800]
 
-    em = Embed(color=Color.red)
+    em = dhooks.Embed(color=0xe74c3c)
     em.set_author('[ERROR] Exception occured on server')
     em.description = f'```py\n{excstr}```'
     em.set_footer(f'Host: {socket.gethostname()}')
-    
+
     app.add_task(app.webhook.send(embeds=[em]))
 
     return response.json(resp, status=500)
