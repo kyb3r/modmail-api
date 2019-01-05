@@ -1,7 +1,6 @@
 from urllib.parse import urlencode, parse_qs
 import traceback
 import datetime
-import asyncio
 import secrets
 import socket
 
@@ -16,7 +15,6 @@ import dhooks
 
 from core import config
 import core
-
 
 
 app = Sanic(__name__)

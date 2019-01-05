@@ -1,4 +1,3 @@
-from urllib.parse import parse_qs
 import secrets
 import json
 import os
@@ -6,7 +5,6 @@ import os
 from datetime import datetime
 from sanic import Blueprint, response
 from sanic_cors import CORS
-from pymongo.errors import DuplicateKeyError
 from pymongo import ReturnDocument
 
 from .utils import *
@@ -17,6 +15,7 @@ host = f'api.{domain}'
 api = Blueprint('api', host=host)
 
 CORS(api, automatic_options=True)
+
 
 @api.get('/')
 async def index(request):
@@ -37,12 +36,14 @@ async def index(request):
 
     return response.text(json.dumps(resp, indent=4))
 
+
 @api.post('/webhooks/github')
 async def upgrade(request):
     if not validate_github_payload(request):
         return response.text('fuck off', 401)  # not sent by github
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
+
 
 @api.get('/logs/key')
 @auth_required()
@@ -53,7 +54,7 @@ async def get_log_url(request, auth_info):
         key = secrets.token_hex(6)
         key_exists = await request.app.db.api.find_one({'logs.key': key})
         if not key_exists:
-            log = await request.app.db.api.find_one_and_update(
+            await request.app.db.api.find_one_and_update(
                 {'user_id': user_id},
                 {'$set': {f"logs.{request.json['channel_id']}": {
                     'key': key,
@@ -71,6 +72,7 @@ async def get_log_url(request, auth_info):
             )
             return response.text(f'https://logs.modmail.tk/{user_id}/{key}')
 
+
 @api.get('/logs/user/<user_id>')
 @auth_required()
 async def get_logs_user(request, auth_info, user_id):
@@ -81,16 +83,17 @@ async def get_logs_user(request, auth_info, user_id):
             user_logs.append(log)
     return response.json(user_logs)
 
+
 @api.get('/logs/<channel_id>')
 @auth_required()
 async def get_log_data(request, auth_info, channel_id):
     """Get log data"""
-    user_id = auth_info['user_id']
     if channel_id in auth_info['logs']:
         return auth_info['logs'][channel_id]
     else:
         return response.text('Not Found', status=404)
-                
+
+
 @api.post('/logs/<channel_id>')
 @auth_required()
 async def post_log(request, auth_info, channel_id):
@@ -104,7 +107,19 @@ async def post_log(request, auth_info, channel_id):
         )
         return response.json(log['logs'][channel_id])
     else:
-        return response.text('Not Found', status=404)
+        if 'force' in request.raw_args:
+            while True:
+                key = secrets.token_hex(6)
+                key_exists = await request.app.db.api.find_one({'logs.key': key})
+                if not key_exists:
+                    request.json['key'] = key
+                    log = await request.app.db.api.find_one_and_update(
+                        {'user_id': user_id},
+                        {'$set': {f'logs.{channel_id}.{i}': request.json[i] for i in request.json}},
+                        return_document=ReturnDocument.AFTER
+                    )
+            return response.json(log['logs'][channel_id])
+
 
 @api.patch('/logs/<channel_id>')
 @auth_required()
@@ -121,7 +136,7 @@ async def patch_log_content(request, auth_info, channel_id):
         return response.json(log['logs'][channel_id])
     else:
         return response.text('Not Found', status=404)
-                
+
 
 @api.delete('/logs/<channel_id>')
 @auth_required()
@@ -138,11 +153,13 @@ async def delete_log(request, auth_info, channel_id):
     else:
         return response.text('Not Found', status=404)
 
+
 @api.get('/config')
 @auth_required()
 async def get_config(request, auth_info):
     '''Get config data'''
     return response.json(auth_info['config'])
+
 
 @api.patch('/config')
 @auth_required()
@@ -150,6 +167,7 @@ async def update_config(request, auth_info):
     user_id = auth_info['user_id']
     await request.app.db.api.update_one( {'user_id': user_id}, {'$set': {'config' : request.json}})
     return response.json({'success': True})
+
 
 @api.get('/metadata')
 async def get_modmail_info(request):
@@ -223,11 +241,6 @@ async def regen_token(request, auth_info):
     new_data.pop('_id')
     return response.json(new_data)
 
-# @api.post('/token')
-# @auth_required(admin=True) # ?? 
-# # yeah
-# # accept the metadata info in request.json
-# # github stuff?yes # i'll put it aside for now 
 
 @api.get('/github/update')
 @auth_required()
@@ -262,12 +275,14 @@ async def modmail_github_user(request, user):
             }
         })
 
+
 @api.put('/star')
 @auth_required()
 async def star_repo(request, auth_info):
     user = await Github.login(request.app, auth_info['github_access_token'])
     await user.star_repository()
     return response.text('', status=204)
+
 
 async def restart_later(app):
     await log_server_update(app)
