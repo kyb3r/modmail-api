@@ -113,6 +113,7 @@ async def post_log(request, auth_info, channel_id):
                 key_exists = await request.app.db.api.find_one({'logs.key': key})
                 if not key_exists:
                     request.json['key'] = key
+                    request.json['user_id'] = user_id
                     log = await request.app.db.api.find_one_and_update(
                         {'user_id': user_id},
                         {'$set': {f'logs.{channel_id}.{i}': request.json[i] for i in request.json}},
