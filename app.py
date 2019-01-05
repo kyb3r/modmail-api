@@ -92,10 +92,9 @@ async def on_error(request, exception):
     if len(excstr) > 1800:
         excstr = excstr[:1800]
 
-    em = dhooks.Embed(color=0xe74c3c)
-    em.set_author('[ERROR] Exception occured on server')
+    em = dhooks.Embed(color=0xe74c3c, title=f'`[ERROR] - {request.method} {request.url}`')
     em.description = f'```py\n{excstr}```'
-    em.set_footer(f'Host: {socket.gethostname()}')
+    em.set_footer(f'Host: {socket.gethostname()} | Domain: {app.cfg.DOMAIN}')
 
     app.add_task(app.webhook.send(embeds=[em]))
 

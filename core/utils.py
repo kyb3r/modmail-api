@@ -153,7 +153,7 @@ def log_server_update(app):
     em.set_author('[INFO] Server updating and restarting.')
     return app.webhook.send(embeds=[em])
 
-def log_server_error(app, requeust, excstr):
+def log_server_error(app, request, excstr):
     em = dhooks.Embed(color=Color.red)
     em.set_author('[ERROR] Exception occured on server}')
     em.description = f'{request.url}\n```py\n{excstr}```'
