@@ -63,27 +63,42 @@ async def aexit(app, loop):
     await app.session.close()
 
 @app.exception(SanicException)
-def sanic_exception(request, exception):
-    try:
-        raise(exception)
-    except:
-        traceback.print_exc()
-    return response.text(str(exception), status=exception.status_code)
+async def sanic_exception(request, exception):
+
+    resp = {
+        'success': False,
+        'error': str(exception)
+    }
+
+    print(exception)
+
+    return response.json(resp, status=exception.status_code)
 
 @app.exception(Exception)
 async def on_error(request, exception):
-    if not isinstance(exception, SanicException):
-        try:
-            raise(exception)
-        except:
-            excstr = traceback.format_exc()
-            print(excstr)
 
-        if len(excstr) > 1000:
-            excstr = excstr[:1000]
+    resp = {
+        'success': False,
+        'error': str(exception)
+    }
 
-        app.add_task(core.log_server_error(app, request, excstr))
-    return response.text('something went wrong xd', status=500)
+    try:
+        raise exception
+    except:
+        excstr = traceback.format_exc()
+        print(excstr)
+
+    if len(excstr) > 1800:
+        excstr = excstr[:1800]
+
+    em = Embed(color=Color.red)
+    em.set_author('[ERROR] Exception occured on server')
+    em.description = f'```py\n{excstr}```'
+    em.set_footer(f'Host: {socket.gethostname()}')
+    
+    app.add_task(app.webhook.send(embeds=[em]))
+
+    return response.json(resp, status=500)
 
 @app.get('/')
 async def index(request):
