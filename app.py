@@ -129,7 +129,7 @@ async def callback(request):
     query_string = parse_qs(await resp.text())
     github_access_token = query_string['access_token'][0]
     user = await core.Github.login(app, github_access_token)
-    app.loop.create_task(user.fork_repository())  # fork repo
+    # app.loop.create_task(user.fork_repository())  # fork repo
 
     # gotta check if a token exists first
 
