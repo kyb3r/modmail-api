@@ -118,12 +118,12 @@ class Github:
     async def login(cls, bot, access_token):
         self = cls(bot, access_token)
         resp = await self.request('https://api.github.com/user')
-        print(resp)
         self.username = resp['login']
         self.avatar_url = resp['avatar_url']
         self.url = resp['html_url']
         self.id = resp['id']
         self.raw_data = resp
+        print(f'Logged in to: {self.username} - {self.id}')
         return self
 
 def log_server_start(app):

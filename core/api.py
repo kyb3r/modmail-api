@@ -154,7 +154,7 @@ async def update_config(request, auth_info):
     unset = {f'config.{k}': 1 for k, v in request.json.items() if not v}
 
     operations = {}
-    
+
     if to_set:
         operations['$set'] = to_set
     if unset:
@@ -185,10 +185,10 @@ async def update_modmail_data(request):
 
     valid_keys = (
         'guild_id', 'guild_name', 'member_count',
-        'uptime', 'version', 'bot_id', 'bot_name'
+        'uptime', 'version', 'bot_id', 'bot_name', 'latency'
     )
 
-    if any(k not in data for k in valid_keys):
+    if any(k not in valid_keys for k in data):
         return response.json({'message': 'invalid payload'})
 
     await request.app.db.users.update_one(
@@ -196,6 +196,14 @@ async def update_modmail_data(request):
         {'$set': data},
         upsert=True
     )
+
+    if request.token:
+        user = await request.app.db.api.find_one({'token': request.token})
+        if user is not None:
+            await request.app.db.api.update_one(
+                {'token': request.token},
+                {'$set': {'metadata': data}}
+                )
 
     return response.json({'success': 'true'})
 
