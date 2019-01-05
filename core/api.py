@@ -153,6 +153,7 @@ async def update_config(request, auth_info):
 
 @api.get('/metadata')
 async def get_modmail_info(request):
+    print(request.headers)
     app = request.app
 
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
