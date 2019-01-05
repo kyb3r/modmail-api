@@ -32,8 +32,8 @@ class LogEntry:
             out += f'[R] {self.creator} ({self.creator.id}) created a modmail thread. \n'
         else:
             out += f'[M] {self.creator} created a thread with [R] {self.recipient} ({self.recipient.id})\n'
-
-        out += '----------------' * 3 + '\n'
+        
+        out += '────────────────' * 3 + '\n'
 
         if self.messages:
             for index, message in enumerate(self.messages):
@@ -49,13 +49,13 @@ class LogEntry:
                 out += base
 
                 if curr != next:
-                    out += '----------------' * 2 + '\n'
+                    out += '────────────────' * 2 + '\n'
                     current_author = author
 
         if not self.open:
             if self.messages:  # only add if at least 1 message was sent
-                out += '----------------' * 3 + '\n'            
-            out += f'[M] {self.closer} closed the modmail thread. \n'
+                out += '────────────────' * 3 + '\n'            
+            out += f'[M] {self.closer} ({self.closer.id}) closed the modmail thread. \n'
             out += f"Thread closed at {self.closed_at.strftime('%d %b %Y - %H:%M UTC')} \n"
                     
         return out
