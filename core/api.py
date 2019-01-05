@@ -148,8 +148,11 @@ async def get_config(request, auth_info):
 @auth_required()
 async def update_config(request, auth_info):
     user_id = auth_info['user_id']
+
+    to_set = {k: v for k, v in request.json.items() if v}
     unset = {f'config.{k}': 1 for k, v in request.json.items() if not v}
-    operations = {'$set': {'config': request.json}}
+
+    operations = {'$set': {'config': to_set}}
     if unset:
         operations['$unset'] = unset
 
