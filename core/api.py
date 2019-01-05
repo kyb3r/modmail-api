@@ -148,7 +148,7 @@ async def get_config(request, auth_info):
 @auth_required()
 async def update_config(request, auth_info):
     user_id = auth_info['user_id']
-    await request.app.db.api.update_one({'user_id': user_id}, {'$set': {'config' : request.json})
+    await request.app.db.api.update_one( {'user_id': user_id}, {'$set': {'config' : request.json}})
     return response.json({'success': True})
 
 @api.get('/metadata')
