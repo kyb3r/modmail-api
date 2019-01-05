@@ -148,19 +148,7 @@ async def get_config(request, auth_info):
 @auth_required()
 async def update_config(request, auth_info):
     user_id = auth_info['user_id']
-
-    to_set = {f'config.{k}': v for k, v in request.json.items() if v}
-
-    unset = {f'config.{k}': 1 for k, v in request.json.items() if not v}
-
-    operations = {}
-
-    if to_set:
-        operations['$set'] = to_set
-    if unset:
-        operations['$unset'] = unset
-
-    await request.app.db.api.update_one({'user_id': user_id}, operations)
+    await request.app.db.api.update_one({'user_id': user_id}, {'$set': {'config' : request.json})
     return response.json({'success': True})
 
 @api.get('/metadata')
