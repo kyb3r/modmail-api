@@ -29,9 +29,9 @@ class LogEntry:
         out = f"Thread created at {self.created_at.strftime('%d %b %Y - %H:%M UTC')}\n"
 
         if self.creator == self.recipient:
-            out += f'[R] {self.creator} created a modmail thread. \n'
+            out += f'[R] {self.creator} ({self.creator.id}) created a modmail thread. \n'
         else:
-            out += f'[M] {self.creator} created a thread with [R] {self.recipient}\n'
+            out += f'[M] {self.creator} created a thread with [R] {self.recipient} ({self.recipient.id})\n'
 
         out += '----------------' * 3 + '\n'
 
