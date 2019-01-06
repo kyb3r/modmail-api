@@ -102,7 +102,7 @@ async def post_log(request, auth_info, channel_id):
             {'$set': {f'logs.{channel_id}.{i}': request.json[i] for i in request.json}},
             return_document=ReturnDocument.AFTER
         )
-        return response.json(log['logs'][channel_id])
+        return response.json(request.json)
     else:
         return response.text('Not Found', status=404)
 
