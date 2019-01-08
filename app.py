@@ -27,7 +27,6 @@ app.blueprint(core.logs)
 app.blueprint(core.dashboard)
 
 app.blueprint(core.rd)
-app.blueprint(core.deprecated)
 
 app.static('/static', './static')
 
@@ -177,36 +176,6 @@ async def callback(request):
 
     return response.redirect('http://'+app.url_for('dashboard.index'))
 
-# deprecated
-@app.get('/logged-in')
-async def logged_in(request):
-    username = request.raw_args.get('username', 'there')
-    with open('static/template.html') as f:
-        html = f.read().format(
-            title=f'Hey {username}!',
-            message='You can now go back to discord and use the `<code>update</code>` command.'
-        )
-    return response.html(html)
-
-# deprecated
-@app.get('/already-logged-in')
-async def already_logged_in(request):
-    with open('static/template.html') as f:
-        html = f.read().format(
-            title='Already Logged In!',
-            message='Please use the `<code>github logout</code>` command and logout first.'
-        )
-    return response.html(html)
-
-# deprecated
-@app.route('/modmail', host='api.kybr.tk', methods=['GET', 'POST'])
-async def deprecated(request):
-    '''Keep old url users working'''
-    if request.method == 'POST':
-        await app.session.post('https://api.modmail.tk/metadata', json=request.json)
-        return response.json({'sucess': True})
-    else:
-        return response.redirect('https://api.modmail.tk/metadata')
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
