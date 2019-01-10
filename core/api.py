@@ -50,7 +50,7 @@ async def badges_instances(request):
     url = f"https://img.shields.io/badge/instances-{instances}-7289DA.svg?style=for-the-badge"
     async with request.app.session.get(url) as resp:
         file = await resp.read()
-    return response.raw(file, content_type='image/svg+xml')
+    return response.raw(file, content_type='image/svg+xml', headers={'cache-control': 'no-cache'})
 
 @api.get('/logs/key')
 @auth_required()
