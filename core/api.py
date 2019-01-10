@@ -44,6 +44,14 @@ async def upgrade(request):
     request.app.loop.create_task(restart_later(request.app))
     return response.json({'success': True})
 
+@api.get('/badges/instances.svg')
+async def badges_instances(request):
+    instances = await request.app.db.users.count_documents({})
+    url = f"https://img.shields.io/badge/instances-{instances}-7289DA.svg?style=for-the-badge"
+    async with request.app.session.get(url) as resp:
+        file = await resp.read()
+    return response.raw(file, content_type='image/svg+xml')
+
 @api.get('/logs/key')
 @auth_required()
 async def get_log_url(request, auth_info):
