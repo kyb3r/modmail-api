@@ -47,7 +47,7 @@ async def upgrade(request):
 @api.get('/badges/instances.svg')
 async def badges_instances(request):
     instances = await request.app.db.users.count_documents({})
-    url = f"https://img.shields.io/badge/instances-{instances}-7289DA.svg?style=for-the-badge"
+    url = f"https://img.shields.io/badge/instances-{instances}-e74c3c.svg?style=for-the-badge"
     async with request.app.session.get(url) as resp:
         file = await resp.read()
     return response.raw(file, content_type='image/svg+xml', headers={'cache-control': 'no-cache'})
