@@ -182,7 +182,7 @@ async def update_modmail_data(request):
 
     valid_keys = (
         'guild_id', 'guild_name', 'member_count',
-        'uptime', 'version', 'bot_id', 'bot_name', 'latency'
+        'uptime', 'version', 'bot_id', 'bot_name', 'latency', 'owner_name', 'owner_id'
     )
 
     if any(k not in valid_keys for k in data):
