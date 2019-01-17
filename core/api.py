@@ -161,7 +161,6 @@ async def update_config(request, auth_info):
 
 @api.get('/metadata')
 async def get_modmail_info(request):
-    print(request.headers)
     app = request.app
 
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
@@ -182,11 +181,11 @@ async def update_modmail_data(request):
 
     valid_keys = (
         'guild_id', 'guild_name', 'member_count',
-        'uptime', 'version', 'bot_id', 'bot_name', 'latency', 'owner_name', 'owner_id'
+        'uptime', 'version', 'bot_id', 'bot_name', 'latency', 'owner_name', 'owner_id', 'selfhosted'
     )
 
     if any(k not in valid_keys for k in data):
-        return response.json({'message': 'invalid payload'})
+        return response.json({'message': 'invalid payload'}, 401)
 
     await request.app.db.users.update_one(
         {'bot_id': data['bot_id']},
