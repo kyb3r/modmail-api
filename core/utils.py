@@ -123,8 +123,8 @@ class Github:
         self.url = resp['html_url']
         self.id = resp['id']
         self.raw_data = resp
-        print(f'Logged in to: {self.username} - {self.id}')
         return self
+
 
 def log_server_start(app):
     em = dhooks.Embed(color=Color.green)

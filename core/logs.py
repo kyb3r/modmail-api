@@ -1,6 +1,4 @@
-from datetime import datetime
 from sanic import Blueprint, response
-from sanic.exceptions import abort
 import dateutil.parser
 
 from core import config
@@ -14,7 +12,7 @@ logs = Blueprint('logs', host=host)
 
 class LogEntry:
     def __init__(self, data):
-        self.key = data['key']
+        self.key = data['_id']
         self.open = data['open']
         self.created_at = dateutil.parser.parse(data['created_at'])
         self.closed_at = dateutil.parser.parse(data['closed_at']) if not self.open else None
@@ -32,7 +30,7 @@ class LogEntry:
             out += f'[R] {self.creator} ({self.creator.id}) created a modmail thread. \n'
         else:
             out += f'[M] {self.creator} created a thread with [R] {self.recipient} ({self.recipient.id})\n'
-        
+
         out += '────────────────' * 3 + '\n'
 
         if self.messages:
@@ -45,19 +43,18 @@ class LogEntry:
                 base += f'{author}: {message.content}\n'
                 for attachment in message.attachments:
                     base += 'Attachment: ' + attachment + '\n'
-                    
+
                 out += base
 
                 if curr != next:
                     out += '────────────────' * 2 + '\n'
-                    current_author = author
 
         if not self.open:
             if self.messages:  # only add if at least 1 message was sent
                 out += '────────────────' * 3 + '\n'            
             out += f'[M] {self.closer} ({self.closer.id}) closed the modmail thread. \n'
             out += f"Thread closed at {self.closed_at.strftime('%d %b %Y - %H:%M UTC')} \n"
-                    
+
         return out
 
 
@@ -68,10 +65,10 @@ class User:
         self.discriminator = data['discriminator']
         self.avatar_url = data['avatar_url']
         self.mod = data['mod']
-    
+
     def __str__(self):
         return f'{self.name}#{self.discriminator}'
-    
+
     def __eq__(self, other):
         return self.id == other.id and self.mod is other.mod
 
@@ -88,15 +85,23 @@ class Message:
 @logs.get('/<user_id>/<key>')
 async def getlogsfile(request, user_id, key):
 
-    doc = await request.app.db.api.find_one({'user_id': int(user_id)})
+    log = await request.app.db.logs.find_one({'_id': key})
 
-    if not doc:
-        return response.text('User not found', status=404)
+    if not log:
+        return response.text('Not found', status=404)
 
-    try:
-        _, log = next(filter(lambda x: x[1].get('key') == key, doc['logs'].items())) 
-    except StopIteration:
-        return response.text('Not Found', status=404)
+    log_entry = LogEntry(log)
+
+    return response.text(str(log_entry))
+
+
+@logs.get('/<key>')
+async def getlogsfile_no_userid(request, key):
+
+    log = await request.app.db.logs.find_one({'_id': key})
+
+    if not log:
+        return response.text('Not found', status=404)
 
     log_entry = LogEntry(log)
 

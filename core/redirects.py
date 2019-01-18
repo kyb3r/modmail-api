@@ -11,12 +11,14 @@ REDIRECTS = {
     'changelog': 'https://github.com/kyb3r/modmail/blob/master/CHANGELOG.md'
 }
 
+
 @rd.get('/<path>')
 async def redirects(request, path):
     endpoint = REDIRECTS.get(path)
     if not endpoint:
         abort(404)
     return response.redirect(endpoint)
+
 
 @rd.get('/<repo>', host=f'repo.{config.DOMAIN}')
 async def repo(request, repo):

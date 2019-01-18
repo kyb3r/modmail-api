@@ -32,8 +32,9 @@ app.static('/static', './static')
 
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
 
+
 def render_template(name, *args, **kwargs):
-    template = jinja_env.get_template(name+'.html')
+    template = jinja_env.get_template(name + '.html')
     request = core.get_stack_variable('request')
     kwargs['request'] = request
     kwargs['session'] = request['session']
@@ -41,11 +42,13 @@ def render_template(name, *args, **kwargs):
     kwargs.update(globals())
     return response.html(template.render(*args, **kwargs))
 
+
 app.render_template = render_template
+
 
 @app.listener('before_server_start')
 async def init(app, loop):
-    '''Initialize app config, database and send the status discord webhook payload.'''
+    """Initialize app config, database and send the status discord webhook payload."""
     app.password = config.PASSWORD
     app.session = aiohttp.ClientSession(loop=loop)
     app.webhook = dhooks.Webhook.Async(config.WEBHOOK_URL)
@@ -55,10 +58,12 @@ async def init(app, loop):
 
     await core.log_server_start(app)
 
+
 @app.listener('after_server_stop')
 async def aexit(app, loop):
     await core.log_server_stop(app)
     await app.session.close()
+
 
 @app.exception(SanicException)
 async def sanic_exception(request, exception):

@@ -16,6 +16,7 @@ sanic-session = "*"
 pyjwt = "*"
 sanic-cors = "*"
 python-dateutil = "*"
+"jinja2" = "*"
 
 [dev-packages]
 
