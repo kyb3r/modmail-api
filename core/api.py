@@ -67,6 +67,7 @@ async def get_log_url(request, auth_info):
             await request.app.db.logs.insert_one(
                 {
                     '_id': key,
+                    'key': key,
                     'open': True,
                     'created_at': str(datetime.utcnow()),
                     'closed_at': None,
