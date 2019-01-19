@@ -11,6 +11,8 @@ from pymongo import ReturnDocument
 
 from .utils import auth_required, config, validate_github_payload, log_server_update, log_server_stop, Github
 
+from dhooks import Embed
+
 domain = config.DOMAIN
 host = f'api.{domain}'
 
@@ -189,6 +191,15 @@ async def get_modmail_info(request):
     }
     return response.json(data)
 
+async def log_new_instance(request):
+    data = request.json
+    count = await request.app.db.users.count_documents({})
+
+    em = Embed(color=0x2ecc71, timestamp='now')
+    em.add_field(name='Guild Name', value=data['guild_name'])
+    em.add_field(name='Member Count', value=data['member_count'])
+    em.set_footer(text=f"{count} - Owner: {data['owner_name']}", icon_url=data['avatar_url'])
+    await request.app.new_instance_webhook.send(embed=em)
 
 @api.post('/metadata')
 async def update_modmail_data(request):
@@ -198,11 +209,16 @@ async def update_modmail_data(request):
         'guild_id', 'guild_name', 'member_count',
         'uptime', 'version', 'bot_id', 'bot_name',
         'latency', 'owner_name', 'owner_id', 'selfhosted',
-        'last_updated'
+        'last_updated', 'avatar_url'
     )
 
     if any(k not in valid_keys for k in data):
         return response.json({'message': 'invalid payload'}, 401)
+
+    
+    exists = await request.app.db.users.find_one({'bot_id': data['bot_id']})
+    if exists is None:
+        await log_new_instance(request)
 
     await request.app.db.users.update_one(
         {'bot_id': data['bot_id']},

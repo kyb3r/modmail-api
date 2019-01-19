@@ -52,6 +52,7 @@ async def init(app, loop):
     app.password = config.PASSWORD
     app.session = aiohttp.ClientSession(loop=loop)
     app.webhook = dhooks.Webhook.Async(config.WEBHOOK_URL)
+    app.new_instance_webhook = dhooks.Webhook.Async(config.NEW_INSTANCE_WEBHOOK_URL)
     app.webhook.avatar_url = 'http://icons.iconarchive.com/icons/graphicloads/100-flat/256/analytics-icon.png'
     app.webhook.username = 'modmail.tk'
     app.db = AsyncIOMotorClient(config.MONGO).modmail
