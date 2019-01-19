@@ -175,7 +175,7 @@ async def callback(request):
                 'github_access_token': github_access_token,
                 'metadata': {},
                 'config': {},
-                'logs': {},
+                'logs': [],
                 }
         }, upsert=True)
 
