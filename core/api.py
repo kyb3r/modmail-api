@@ -199,7 +199,12 @@ async def log_new_instance(request):
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
     em.set_footer(text=f"{count} - Owner: {data['owner_name']}", icon_url=data['avatar_url'])
-    await request.app.new_instance_webhook.send(embed=em)
+    
+    await request.app.new_instance_webhook.send(
+        embed=em, 
+        username='New Instance', 
+        avatar_url='https://i.imgur.com/klWk4Si.png'
+        )
 
 @api.post('/metadata')
 async def update_modmail_data(request):
