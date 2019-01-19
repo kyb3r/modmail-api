@@ -30,6 +30,9 @@ app.blueprint(core.rd)
 
 app.static('/static', './static')
 
+app.static('/favicon.ico', './static/favicon.ico')
+
+
 jinja_env = Environment(loader=PackageLoader('app', 'templates'))
 
 
@@ -77,6 +80,7 @@ async def sanic_exception(request, exception):
 
     return response.json(resp, status=exception.status_code)
 
+
 @app.exception(Exception)
 async def on_error(request, exception):
 
@@ -102,17 +106,20 @@ async def on_error(request, exception):
 
     return response.json(resp, status=500)
 
+
 @app.get('/')
 async def index(request):
-    return render_template('index', 
-        title='Modmail', 
+    return render_template(
+        'index',
+        title='Modmail',
         message='DM to contact mods!'
-        )
+    )
+
 
 @app.get('/login')
 async def login(request):
     if request['session'].get('logged_in'):
-        return response.redirect('http://'+app.url_for('dashboard.index'))
+        return response.redirect('http://' + app.url_for('dashboard.index'))
 
     data = {
         'client_id': config.GITHUB_CLIENT_ID,
@@ -121,11 +128,13 @@ async def login(request):
     url = config.GITHUB_OAUTH_URL + urlencode(data)
     return response.redirect(url)
 
+
 @app.get('/logout')
 @core.login_required()
 async def logout(request):
     request['session'].clear()
     return response.redirect(app.url_for('index'))
+
 
 @app.get('/callback')
 async def callback(request):
@@ -135,7 +144,7 @@ async def callback(request):
     except KeyError:
         # in the case of invalid callback like someoone played with the url
         return response.text('error: ' + request.raw_args['error'])                                    
-    
+
     params = {
         'client_id': config.GITHUB_CLIENT_ID,
         'client_secret': config.GITHUB_SECRET,
@@ -167,7 +176,7 @@ async def callback(request):
     request['session']['token'] = token 
 
     await app.db.api.update_one(
-        {'user_id': user.id}, 
+        {'user_id': user.id},
         {'$set': {
                 'username': user.username,
                 'token': token,
