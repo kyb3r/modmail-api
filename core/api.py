@@ -195,7 +195,7 @@ async def log_new_instance(request):
     data = request.json
     count = await request.app.db.users.count_documents({})
 
-    em = Embed(color=0x36393F, timestamp='now')
+    em = Embed(color=0x36393F)
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
     em.add_field(name='Owner', value=f"<@{data['owner_id']}>")
