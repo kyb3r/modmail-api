@@ -1,13 +1,13 @@
-from urllib.parse import parse_qs
 import secrets
 import json
 import os
 
+from bson import json_util
 from datetime import datetime
 from sanic import Blueprint, response
 from sanic_cors import CORS
 from pymongo.errors import DuplicateKeyError
-from pymongo import ReturnDocument
+from pymongo import DeleteMany, ReturnDocument
 
 from .utils import auth_required, config, validate_github_payload, log_server_update, log_server_stop, Github
 
@@ -38,7 +38,7 @@ async def index(request):
 
     resp = {'success': True, 'endpoints': list(endpoints), 'deprecated': list(deprecated)}
 
-    return response.text(json.dumps(resp, indent=4))
+    return response.json(resp)
 
 
 @api.post('/webhooks/github')
@@ -56,6 +56,49 @@ async def badges_instances(request):
     async with request.app.session.get(url) as resp:
         file = await resp.read()
     return response.raw(file, content_type='image/svg+xml', headers={'cache-control': 'no-cache'})
+
+
+@api.get('/backup')
+@auth_required()
+async def get_user_backup(request, auth_info):
+    user_id = auth_info['user_id']
+    data = {
+        'config': await request.app.db.api.find_one({'user_id': user_id}),
+        'logs': await request.app.db.logs.find({'user_id': user_id}).to_list(None)
+    }
+    # response.HTTPResponse is used instead of response.json as
+    # sanic uses ujson which does not support ``default`` kwarg
+    return response.HTTPResponse(
+        json.dumps(data, default=json_util.default),
+        content_type='application/json'
+    )
+
+
+@api.post('/backup')
+@auth_required()
+async def post_user_backup(request, auth_info):
+    user_id = auth_info['user_id']
+
+    # check for request.json validity
+    data = json.loads(json.dumps(request.json), object_hook=json_util.object_hook)
+    if any(i not in data for i in ('config', 'logs')):
+        return response.text('Invalid Backup File', status=400)
+
+    # delete pre-existing data
+    await request.app.db.api.find_one_and_delete({'user_id': user_id})
+    logs = await request.app.db.logs.delete_many({'user_id': user_id})
+
+    # add new data
+    await request.app.db.api.insert_one(data['config'])
+    await request.app.db.logs.insert_many(data['logs'])
+
+    return response.json({
+        'config': True,
+        'logs': {
+            'deleted': logs.deleted_count,
+            'added': len(data['logs'])
+        }
+    })
 
 
 @api.get('/logs/key')
@@ -107,7 +150,6 @@ async def get_log_data(request, auth_info, channel_id):
         return await request.app.db.logs.find_one({'channel_id': channel_id, 'user_id': user_id})
     else:
         return response.text('Not Found', status=404)
-
 
 
 @api.post('/logs/<channel_id>')
