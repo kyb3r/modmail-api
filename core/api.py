@@ -195,14 +195,15 @@ async def log_new_instance(request):
     data = request.json
     count = await request.app.db.users.count_documents({})
 
-    em = Embed(color=0x2ecc71, timestamp='now')
+    em = Embed(color=0x36393F, timestamp='now')
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
-    em.set_footer(text=f"{count} - Owner: {data['owner_name']}", icon_url=data.get('avatar_url'))
+    em.add_field(name='Owner', value=f"<@{data['owner_id']}>")
+    em.set_footer(text=f"{count} - v{data['version']}", icon_url=data.get('avatar_url'))
     
     await request.app.new_instance_webhook.send(
         embed=em, 
-        username='New Instance', 
+        username='New Server', 
         avatar_url='https://i.imgur.com/klWk4Si.png'
         )
 
@@ -221,7 +222,7 @@ async def update_modmail_data(request):
         return response.json({'message': 'invalid payload'}, 401)
 
     
-    exists = await request.app.db.users.find_one({'bot_id': data['bot_id']})
+    exists = await request.app.db.users.find_one({'guild_id': data['guild_id']})
     if exists is None:
         await log_new_instance(request)
 
