@@ -222,7 +222,11 @@ async def update_modmail_data(request):
         return response.json({'message': 'invalid payload'}, 401)
 
     
-    exists = await request.app.db.users.find_one({'guild_id': data['guild_id']})
+    exists = await request.app.db.users.find_one({
+        'guild_id': data['guild_id'],
+        'bot_id': data['bot_id']
+        })
+
     if exists is None:
         await log_new_instance(request)
 
