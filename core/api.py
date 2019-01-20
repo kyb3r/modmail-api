@@ -198,7 +198,7 @@ async def log_new_instance(request):
     em = Embed(color=0x2ecc71, timestamp='now')
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
-    em.set_footer(text=f"{count} - Owner: {data['owner_name']}", icon_url=data['avatar_url'])
+    em.set_footer(text=f"{count} - Owner: {data['owner_name']}", icon_url=data.get('avatar_url'))
     
     await request.app.new_instance_webhook.send(
         embed=em, 
