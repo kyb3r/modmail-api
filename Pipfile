@@ -17,6 +17,8 @@ pyjwt = "*"
 sanic-cors = "*"
 python-dateutil = "*"
 "jinja2" = "*"
+natural = "*"
+"markdown2" = "*"
 
 [dev-packages]
 
