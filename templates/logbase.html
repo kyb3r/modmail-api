@@ -17,7 +17,7 @@
     </div>
     <div class="info__metadata">
         <div class="info__guild-name">Thread Logs {% if log_entry.open %}(Open){% else %}(Closed){% endif %}</div>
-        <div class="info__channel-topic">Recipient: <strong>{{log_entry.recipient.name | e }}</strong>#{{ log_entry.recipient.discriminator }} - <small><code>{{ log_entry.recipient.id }}</code></small></div>
+        <div class="info__channel-name">Recipient: <strong>{{log_entry.recipient.name | e }}</strong>#{{ log_entry.recipient.discriminator }} - <small><code>{{ log_entry.recipient.id }}</code></small></div>
         {% if log_entry.recipient != log_entry.creator %}
         <div class="info__channel-topic">Creator: <strong>{{log_entry.creator.name | e}}</strong>#{{ log_entry.creator.discriminator }} - <small><code>{{ log_entry.creator.id }}</code></small></div>
         {% else %}
