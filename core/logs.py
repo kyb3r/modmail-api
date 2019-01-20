@@ -145,6 +145,7 @@ class Message:
     
     def format_html_content(self):
         self.html_content = markdown(self.content)[3:-5]
+        self.replace('\n', '<br>')
         self.replace("@everyone", "<span class=\"mention\">@everyone</span>")
         self.replace("@here", "<span class=\"mention\">@here</span>")
 
