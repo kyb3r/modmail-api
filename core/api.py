@@ -203,7 +203,7 @@ async def log_new_instance(request):
     
     await request.app.new_instance_webhook.send(
         embed=em, 
-        username='New Server', 
+        username='New Instance', 
         avatar_url='https://i.imgur.com/klWk4Si.png'
         )
 
