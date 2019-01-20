@@ -199,7 +199,8 @@ async def log_new_instance(request):
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
     em.add_field(name='Owner', value=f"<@{data['owner_id']}>")
-    em.set_footer(text=f"#{count} • v{data['version']}", icon_url=data.get('avatar_url'))
+    selfhosted = data['selfhosted']
+    em.set_footer(text=f"#{count} • {'selfhosted ' if selfhosted else ''}v{data['version']} • {data['bot_name']} ({data['bot_id']})", icon_url=data.get('avatar_url'))
     
     await request.app.new_instance_webhook.send(
         embed=em, 
