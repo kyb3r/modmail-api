@@ -40,7 +40,7 @@
                 {% for message in group.messages %} 
                     {% if message.content %}
                         <div class="chatlog__content">
-                            {{ message.content }}
+                            {{ message.content | e }}
                         </div>
                     {% endif %}
 
