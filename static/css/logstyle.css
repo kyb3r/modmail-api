@@ -58,7 +58,7 @@ img {
 }
 
 .mod-tag {
-    background: #2ecc70a9;
+    background: #2ecc70be;
     font-size: 10px;
     font-weight: 600;
     color: rgba(255, 255, 255, 0.774)!important;
@@ -89,6 +89,7 @@ img {
 
 
 .pre--multiline {
+    font-family: Menlo, Consolas, Monaco, monospace;
     margin-top: 4px;
     padding: 8px;
     border: 2px solid;
@@ -96,6 +97,9 @@ img {
 }
 
 .pre--inline {
+    font-family: Menlo, Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 16px;
     padding: 2px;
     border-radius: 3px;
 }
