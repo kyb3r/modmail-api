@@ -116,4 +116,14 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
                      r'" title="\1" src="https://cdn.discordapp.com/' +
                      r'emojis/\2.png" alt="\1">', content)
 
+    # Custom animated emojis (<a:name:id>)
+    is_jumboable_animated = not re.sub(r'&lt;(a:.*?:)(\d*)&gt;', '', content)
+    emoji_class_animated = 'emoji emoji--large' \
+        if is_jumboable_animated else 'emoji'
+    content = re.sub(r'&lt;(a:.*?:)(\d*)&gt;',
+                     r'<img class="' +
+                     emoji_class_animated +
+                     r'" title="\1" src="https://cdn.discordapp.com/' +
+                     r'emojis/\2.gif" alt="\1">', content)
+
     return content
