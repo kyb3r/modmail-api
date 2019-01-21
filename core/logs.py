@@ -13,7 +13,6 @@ host = f'logs.{domain}'
 logs = Blueprint('logs', host=host)
 
 
-
 class LogEntry:
     def __init__(self, app, data):
         self.app = app
@@ -26,6 +25,7 @@ class LogEntry:
         self.creator = User(data['creator'])
         self.recipient = User(data['recipient'])
         self.closer = User(data['closer']) if not self.open else None
+        self.close_message = data.get('close_message')
         self.messages = [Message(m) for m in data['messages']]
     
     @property
@@ -51,7 +51,7 @@ class LogEntry:
 
             curr.messages.append(message)
 
-            if (next_message.created_at - message.created_at).total_seconds() > 60 or next_message.author != message.author:
+            if message.is_different_from(next_message):
                 groups.append(curr)
                 curr = MessageGroup(next_message.author)
         
@@ -131,6 +131,10 @@ class MessageGroup:
     def created_at(self):
         return self.messages[0].human_created_at
 
+    @property
+    def type(self):
+        return self.messages[0].type
+
 class Message:
     def __init__(self, data):
         self.id = int(data['message_id'])
@@ -139,6 +143,13 @@ class Message:
         self.content = data['content']
         self.attachments = data['attachments']
         self.author = User(data['author'])
+        self.type = data.get('type', 'thread_message')
+    
+    def is_different_from(self, other):
+        return (
+            (other.created_at - self.created_at).total_seconds() > 60 
+            or other.author != self.author or other.type != self.type
+            )
 
     def replace(self, a, b):
         self.content = self.content.replace(a, b)

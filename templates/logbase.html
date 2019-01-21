@@ -30,12 +30,22 @@
 <div class="chatlog">
     {% for group in log_entry.message_groups %}
         <div class="chatlog__message-group">
+            {% if group.type == 'thread_message'%}
             <div class="chatlog__author-avatar-container">
                 <img class="chatlog__author-avatar" src="{{ group.author.avatar_url }}" onerror="this.src='{{ group.author.default_avatar_url }}'" />
             </div>  
                      
             <div class="chatlog__messages">
-                <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name}}</span>{% if group.author.mod %}<span class="mod-tag">Mod</span> {% else %}{% endif %}
+                <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>{% if group.author.mod %}<span class="mod-tag">Mod</span> {% else %}{% endif %}
+            {% else %}
+            <div class="chatlog__author-avatar-container">
+                    <img class="chatlog__author-avatar" src="{{ log_entry.system_avatar_url }}"'" />
+            </div>  
+            <div class="chatlog__messages">
+                <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>
+                <span>took a note</span><span class="system-tag">System</span>
+            {% endif %}
+
                 <span class="chatlog__timestamp">{{ group.created_at }}</span>
                 {% for message in group.messages %} 
                     {% if message.content %}
@@ -65,10 +75,16 @@
                 <span class="chatlog__author-name" title="{{ log_entry.closer | string | e }}">{{ log_entry.closer.name}}</span>{% if log_entry.closer.mod %}
                 <span>Closed the thread.</span><span class="system-tag">System</span> {% else %}{% endif %}
                 <span class="chatlog__timestamp">{{ log_entry.human_closed_at }}</span>
+                {% if log_entry.close_message %}
+                <div class="chatlog__content">
+                        {{ log_entry.close_message | e }}
+                </div>
+                {% endif %}
             </div>
         </div> 
     {% else %}
     {% endif %}
+
 </div>
 
 </body>
