@@ -3,11 +3,15 @@
 
 <head>
     <title>Log Entry</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
     <link href="/static/css/logstyle.css" rel="stylesheet">
+    <link href="/static/css/solarized-dark.css" rel="stylesheet">
     <link rel="shortcut icon" href="/static/favicon.ico">
-    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <link rel="stylesheet" href="/static/css/solarized-dark.css">
+    <script src="/static/js/highlight.pack.js"></script>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131896305-1"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -17,79 +21,112 @@
     gtag('config', 'UA-131896305-1');
     </script>
 </head>
+
 <body>
-
-<br>
-<div class="info">
-    <div class="info__guild-icon-container">
-        <img class="info__guild-icon" src="{{ log_entry.recipient.avatar_url }}" onerror="this.src='{{ log_entry.recipient.default_avatar_url }}'" alt="avatar">
-    </div>
-    <div class="info__metadata">
-        <div class="info__guild-name">Thread Logs {% if log_entry.open %}(Open){% else %}(Closed){% endif %}</div>
-        <div class="info__channel-name">Recipient: <strong>{{log_entry.recipient.name | e }}</strong>#{{ log_entry.recipient.discriminator }} - <small><code>{{ log_entry.recipient.id }}</code></small></div>
-        {% if log_entry.recipient != log_entry.creator %}
-        <div class="info__channel-topic">Creator: <strong>{{log_entry.creator.name | e}}</strong>#{{ log_entry.creator.discriminator }} - <small><code>{{ log_entry.creator.id }}</code></small></div>
-        {% else %}
-        {% endif %}
-
-        <div class="info__channel-message-count">{{ log_entry.messages | length }} messages</div>
-    </div>
-</div>
-
-<div class="chatlog">
-    {% for group in log_entry.message_groups %}
-        <div class="chatlog__message-group">
-            {% if group.type == 'thread_message'%}
-            <div class="chatlog__author-avatar-container">
-                <img class="chatlog__author-avatar" src="{{ group.author.avatar_url }}" onerror="this.src='{{ group.author.default_avatar_url }}'" alt="avatar">
+    <br>
+    <div class="info">
+        <div class="info__guild-icon-container">
+            <img class="info__guild-icon"
+                 src="{{ log_entry.recipient.avatar_url }}"
+                 onerror="this.src='{{ log_entry.recipient.default_avatar_url }}'"
+                 alt="avatar">
+        </div>
+        <div class="info__metadata">
+            <div class="info__guild-name">Thread Logs {% if log_entry.open %}
+                (Open){% else %}(Closed){% endif %}</div>
+            <div class="info__channel-name">Recipient:
+                <strong>{{ log_entry.recipient.name | e }}</strong>#{{ log_entry.recipient.discriminator }}
+                -
+                <small><code>{{ log_entry.recipient.id }}</code></small>
             </div>
-
-            <div class="chatlog__messages">
-                <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>{% if group.author.mod %}<span class="mod-tag">Mod</span> {% else %}{% endif %}
-            {% else %}
-            <div class="chatlog__author-avatar-container">
-                    <img class="chatlog__author-avatar" src="{{ log_entry.system_avatar_url }}" alt="avatar">
-            </div>
-            <div class="chatlog__messages">
-                <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>
-                <span>took a note</span><span class="system-tag">System</span>
+            {% if log_entry.recipient != log_entry.creator %}
+                <div class="info__channel-topic">Creator:
+                    <strong>{{ log_entry.creator.name | e }}</strong>#{{ log_entry.creator.discriminator }}
+                    -
+                    <small><code>{{ log_entry.creator.id }}</code></small>
+                </div>
             {% endif %}
-                <span class="chatlog__timestamp">{{ group.created_at }}</span>
-                {% for message in group.messages %}
-                    {% if message.content %}
+
+            <div class="info__channel-message-count">{{ log_entry.messages | length }}
+                messages
+            </div>
+        </div>
+    </div>
+
+    <div class="chatlog">
+        {% for group in log_entry.message_groups %}
+            <div class="chatlog__message-group">
+                <div class="chatlog__author-avatar-container">
+                    {% if group.type == 'thread_message' %}
+                        <img class="chatlog__author-avatar"
+                             src="{{ group.author.avatar_url }}"
+                             onerror="this.src='{{ group.author.default_avatar_url }}'"
+                             alt="avatar">
+                    {% else %}
+                        <img class="chatlog__author-avatar"
+                             src="{{ log_entry.system_avatar_url }}" alt="avatar">
+                    {% endif %}
+                </div>
+
+                <div class="chatlog__messages">
+                    <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>
+
+                    {% if group.type == 'thread_message' %}
+                        {% if group.author.mod %}
+                            <span class="mod-tag">Mod</span>
+                        {% endif %}
+                    {% else %}
+                        <span>took a note</span>
+                        <span class="system-tag">System</span>
+                    {% endif %}
+                    <span class="chatlog__timestamp">{{ group.created_at }}</span>
+                    {% for message in group.messages %}
+                        {% if message.content %}
+                            <div class="chatlog__content">
+                                {{ message.content }}
+                            </div>
+                        {% endif %}
+                        {% for attachment in message.attachments %}
+                            <div class="chatlog__attachment">
+                                <a href="{{ attachment }}">
+                                    <img class="chatlog__attachment-thumbnail"
+                                         src="{{ attachment }}" alt="attachment">
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+        {% if not log_entry.open %}
+            <div class="chatlog__message-group">
+                <div class="chatlog__author-avatar-container">
+                    <img class="chatlog__author-avatar"
+                         src="{{ log_entry.system_avatar_url }}" alt="avatar">
+                </div>
+                <div class="chatlog__messages">
+                    <span class="chatlog__author-name"
+                          title="{{ log_entry.closer | string | e }}">{{ log_entry.closer.name }}</span>
+                    {% if log_entry.closer.mod %}
+                        <span>closed the thread</span>
+                        <span class="system-tag">System</span>
+                    {% endif %}
+                    <span class="chatlog__timestamp">{{ log_entry.human_closed_at }}</span>
+                    {% if log_entry.close_message %}
                         <div class="chatlog__content">
-                            {{ message.content }}
+                            {{ log_entry.close_message }}
                         </div>
                     {% endif %}
-                    {% for attachment in message.attachments %}
-                        <div class="chatlog__attachment">
-                            <a href="{{ attachment }}">
-                                <img class="chatlog__attachment-thumbnail" src="{{ attachment }}" alt="attachment">
-                            </a>
-                        </div>
-                    {% endfor %}
-                {% endfor %}
-            </div>
-        </div>
-    {% endfor %}
-    {% if not log_entry.open %}
-        <div class="chatlog__message-group">
-            <div class="chatlog__author-avatar-container">
-                <img class="chatlog__author-avatar" src="{{ log_entry.system_avatar_url }}" alt="avatar">
-            </div>
-            <div class="chatlog__messages">
-                <span class="chatlog__author-name" title="{{ log_entry.closer | string | e }}">{{ log_entry.closer.name }}</span>{% if log_entry.closer.mod %}
-                <span>closed the thread</span><span class="system-tag">System</span> {% else %}{% endif %}
-                <span class="chatlog__timestamp">{{ log_entry.human_closed_at }}</span>
-                {% if log_entry.close_message %}
-                <div class="chatlog__content">
-                        {{ log_entry.close_message }}
                 </div>
-                {% endif %}
             </div>
-        </div>
-    {% else %}
-    {% endif %}
-</div>
+        {% endif %}
+    </div>
+    <script>
+        $(document).ready(function() {
+            $('.pre--multiline').each(function(i, block) {
+                hljs.highlightBlock(block);
+            });
+        });
+    </script>
 </body>
 </html>

@@ -5,16 +5,17 @@ import base64
 
 def format_content_html(content: str, allow_links: bool = False) -> str:
     # HTML-encode content
-    content = html.escape(content)
 
     def encode_codeblock(m):
         encoded = base64.b64encode(m.group(1).encode()).decode()
         return '\x1AM' + encoded + '\x1AM'
 
     # Encode multiline codeblocks (```text```)
-    content = re.sub(r'```+(?:[^`]*?\n)?([^`]+)\n?```+',
+    content = re.sub(r'```+((?:[^`]*?\n)?(?:[^`]+))\n?```+',
                      encode_codeblock,
                      content)
+
+    content = html.escape(content)
 
     def encode_inline_codeblock(m):
         encoded = base64.b64encode(m.group(1).encode()).decode()
@@ -54,13 +55,6 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
     # Process strike through (~~text~~)
     content = re.sub(r'(~~)(?=\S)(.+?)(?<=\S)\1', r'<s>\2</s>', content)
 
-    def decode_codeblock(m):
-        decoded = base64.b64decode(m.group(1).encode()).decode()
-        return '<div class="pre pre--multiline">' + decoded + '</div>'
-
-    # Decode and process multiline codeblocks
-    content = re.sub('\x1AM(.*?)\x1AM', decode_codeblock, content)
-
     def decode_inline_codeblock(m):
         decoded = base64.b64decode(m.group(1).encode()).decode()
         return '<span class="pre pre--inline">' + decoded + '</span>'
@@ -87,6 +81,22 @@ def format_content_html(content: str, allow_links: bool = False) -> str:
 
     # Process new lines
     content = content.replace('\n', '<br>')
+
+    def decode_codeblock(m):
+        decoded = base64.b64decode(m.group(1).encode()).decode()
+        match = re.match('^([^`]*?\n)?([^`]+)$', decoded)
+        lang = match.group(1) or ''
+        if not lang.strip(' \n\r'):
+            lang = 'plaintext'
+        else:
+            lang = lang.strip(' \n\r')
+
+        result = html.escape(match.group(2))
+        return (f'<div class="pre pre--multiline {lang}">{result}'
+                '</div>')
+
+    # Decode and process multiline codeblocks
+    content = re.sub('\x1AM(.*?)\x1AM', decode_codeblock, content)
 
     # Meta mentions (@everyone)
     content = content.replace('@everyone',
