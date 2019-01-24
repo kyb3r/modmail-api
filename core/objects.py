@@ -24,6 +24,8 @@ class LogEntry:
             data.get('close_message') or ''
         )
         self.messages = [Message(m) for m in data['messages']]
+        self.internal_messages = [m for m in self.messages if m.type == 'internal']
+        self.thread_messages = [m for m in self.messages if m.type not in ('internal', 'system')]
     
     @property
     def system_avatar_url(self):
@@ -142,6 +144,20 @@ class MessageGroup:
     def type(self):
         return self.messages[0].type
 
+class Attachment:
+    def __init__(self, data):
+        if isinstance(data, str): # Backwards compatibility
+            self.id = 0
+            self.filename = 'attachment'
+            self.url = data
+            self.is_image = True 
+            self.size = 0
+        else:
+            self.id = int(data['id'])
+            self.filename = data['filename']
+            self.url = data['url']
+            self.is_image = data['is_image']
+            self.size = data['size']
 
 class Message:
     def __init__(self, data):
@@ -151,7 +167,7 @@ class Message:
                                          now=datetime.utcnow())
         self.raw_content = data['content']
         self.content = self.format_html_content(self.raw_content)
-        self.attachments = data['attachments']
+        self.attachments = [Attachment(a) for a in data['attachments']]
         self.author = User(data['author'])
         self.type = data.get('type', 'thread_message')
 

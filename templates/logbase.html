@@ -12,14 +12,6 @@
     <link rel="stylesheet" href="/static/css/solarized-dark.css">
     <script src="/static/js/highlight.pack.js"></script>
     <script src="/static/js/jquery-3.3.1.min.js"></script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-131896305-1"></script>
-    <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'UA-131896305-1');
-    </script>
 </head>
 
 <body>
@@ -47,37 +39,37 @@
                 </div>
             {% endif %}
 
-            <div class="info__channel-message-count">{{ log_entry.messages | length }}
-                messages
+            <div class="info__channel-message-count">{{ log_entry.thread_messages | length }}
+                messages 
+                {% if log_entry.internal_messages %}
+                <button id='toggle' style='background-color:#7289da; color:white; border:transparent; outline: transparent' onclick="toggleInternalMessages()">Show Internal Messages</button>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <div class="chatlog">
         {% for group in log_entry.message_groups %}
-            <div class="chatlog__message-group">
+            <div class="{{group.type}} chatlog__message-group">
                 <div class="chatlog__author-avatar-container">
-                    {% if group.type == 'thread_message' %}
                         <img class="chatlog__author-avatar"
                              src="{{ group.author.avatar_url }}"
                              onerror="this.src='{{ group.author.default_avatar_url }}'"
-                             alt="avatar">
-                    {% else %}
-                        <img class="chatlog__author-avatar"
-                             src="{{ log_entry.system_avatar_url }}" alt="avatar">
-                    {% endif %}
+                             alt="avatar"/>
                 </div>
 
                 <div class="chatlog__messages">
                     <span class="chatlog__author-name" title="{{ group.author | string | e }}">{{ group.author.name | e }}</span>
-
                     {% if group.type == 'thread_message' %}
-                        {% if group.author.mod %}
-                            <span class="mod-tag">Mod</span>
-                        {% endif %}
+                    {% if group.author.mod %}
+                        <span class="mod-tag">Reply</span>
+                    {% endif %}
+                    {% elif group.type == 'anonymous' %}
+                    <span class='mod-tag'>Anon</span>
+                    {% elif group.type == 'internal' %}
+                    <span class='internal-tag'>Internal</span>
                     {% else %}
-                        <span>took a note</span>
-                        <span class="system-tag">System</span>
+                        <span>took a note</span><span class="system-tag">note</span>
                     {% endif %}
                     <span class="chatlog__timestamp">{{ group.created_at }}</span>
                     {% for message in group.messages %}
@@ -88,9 +80,12 @@
                         {% endif %}
                         {% for attachment in message.attachments %}
                             <div class="chatlog__attachment">
-                                <a href="{{ attachment }}">
-                                    <img class="chatlog__attachment-thumbnail"
-                                         src="{{ attachment }}" alt="attachment">
+                                <a href="{{ attachment.url }}">
+                                    {% if attachment.is_image %}
+                                    <img class="chatlog__attachment-thumbnail" src="{{ attachment.url }}" alt="attachment"/>
+                                    {% else %}
+                                    Attachment: {{ attachment.filename }}
+                                    {% endif %}
                                 </a>
                             </div>
                         {% endfor %}
@@ -122,11 +117,35 @@
         {% endif %}
     </div>
     <script>
+
+        let messages = document.getElementsByClassName('internal')
+        for (let m of messages) {
+            m.style.display = "none";
+        }
+
         $(document).ready(function() {
             $('.pre--multiline').each(function(i, block) {
                 hljs.highlightBlock(block);
             });
         });
+
+        function toggleInternalMessages() {
+            let button = document.getElementById('toggle')
+            if (button.innerHTML === 'Show Internal Messages') {
+                button.innerHTML = 'Hide Internal Messages'
+            } else {
+                button.innerHTML = 'Show Internal Messages'
+            }
+            
+            let messages = document.getElementsByClassName('internal')
+            for (let m of messages) {
+                if (m.style.display === "none") {
+                    m.style.display = "flex";
+                } else {
+                    m.style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 </html>

@@ -87,6 +87,21 @@ img {
     flex-shrink: 0
 }
 
+.internal-tag {
+    background: #e28f23;
+    font-size: 10px;
+    font-weight: 600;
+    color: #fff!important;
+    margin-left: 6px;
+    padding: 1px 2px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    vertical-align: bottom;
+    line-height: 16px;
+    -ms-flex-negative: 0;
+    flex-shrink: 0
+}
+
 
 .pre--multiline {
     font-family: Menlo, Consolas, Monaco, monospace;
