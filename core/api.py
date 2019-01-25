@@ -100,6 +100,17 @@ async def post_user_backup(request, auth_info):
         }
     })
 
+@api.patch('/logs/edit')
+@auth_required()
+async def edit_message(request, user):
+    await request.app.db.logs.update_one(
+        {'messages.message_id': request.json['message_id']},
+        {'$set': {
+            'messages.$.content': request.json['new_content'], 
+            'messages.$.edited': True}
+            }
+        )
+    return response.json({'success': True})
 
 @api.get('/logs/key')
 @auth_required()
