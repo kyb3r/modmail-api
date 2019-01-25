@@ -158,7 +158,8 @@ async def get_log_data(request, auth_info, channel_id):
     """Get log data"""
     user_id = auth_info['user_id']
     if channel_id in auth_info['logs']:
-        return await request.app.db.logs.find_one({'channel_id': channel_id, 'user_id': user_id})
+        data = await request.app.db.logs.find_one({'channel_id': channel_id, 'user_id': user_id})
+        return response.json(data)
     else:
         return response.text('Not Found', status=404)
 
