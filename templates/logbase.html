@@ -76,7 +76,11 @@
                         {% if message.content %}
                             <div class="chatlog__content">
                                 {{ message.content }}
+                                {% if message.edited %}
+                                <span class="chatlog__edited-timestamp">(edited)</span>
+                                {% endif %}
                             </div>
+
                         {% endif %}
                         {% for attachment in message.attachments %}
                             <div class="chatlog__attachment">

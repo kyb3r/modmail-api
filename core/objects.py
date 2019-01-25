@@ -170,6 +170,7 @@ class Message:
         self.attachments = [Attachment(a) for a in data['attachments']]
         self.author = User(data['author'])
         self.type = data.get('type', 'thread_message')
+        self.edited = data.get('edited', False)
 
     def is_different_from(self, other):
         return (
