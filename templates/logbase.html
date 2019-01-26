@@ -48,11 +48,19 @@
             {% endif %}
 
             <div class="info__channel-message-count">{{ log_entry.thread_messages | length }}
-                messages 
+                messages
                 {% if log_entry.internal_messages %}
-                <button id='toggle' class='button' onclick="toggleInternalMessages()">Show Internal Messages</button>
+            
+                <div style="display: flex; justify-content: flex-end">
+                <label class="switch" title="Toggle viewing internal messages">
+                        <input type="checkbox" onclick="toggleInternalMessages()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                
                 {% endif %}
             </div>
+
         </div>
     </div>
 
@@ -142,13 +150,6 @@
         });
 
         function toggleInternalMessages() {
-            let button = document.getElementById('toggle')
-            if (button.innerHTML === 'Show Internal Messages') {
-                button.innerHTML = 'Hide Internal Messages'
-            } else {
-                button.innerHTML = 'Show Internal Messages'
-            }
-            
             let messages = document.getElementsByClassName('internal')
             for (let m of messages) {
                 if (m.style.display === "none") {
