@@ -33,18 +33,17 @@
                  alt="avatar">
         </div>
         <div class="info__metadata">
-            <div class="info__guild-name">Thread Logs {% if log_entry.open %}
+            <div class="info__guild-name"><span style='color:white'>Thread Logs</span> {% if log_entry.open %}
                 (Open){% else %}(Closed){% endif %}</div>
-            <div class="info__channel-name">Recipient:
-                <strong>{{ log_entry.recipient.name | e }}</strong>#{{ log_entry.recipient.discriminator }}
-                -
-                <small><code>{{ log_entry.recipient.id }}</code></small>
+            <div title="{{ log_entry.recipient.id }}" class="info__channel-topic tooltip"><span style="color:white">Recipient:
+                <b>{{ log_entry.recipient.name | e }}</b></span>#{{ log_entry.recipient.discriminator }}
+                <span class='tooltiptext pre pre--inline'>{{ log_entry.recipient.id }}</span>
             </div>
             {% if log_entry.recipient != log_entry.creator %}
-                <div class="info__channel-topic">Creator:
-                    <strong>{{ log_entry.creator.name | e }}</strong>#{{ log_entry.creator.discriminator }}
-                    -
-                    <small><code>{{ log_entry.creator.id }}</code></small>
+            <br>
+                <div class="info__channel-topic tooltip"><span style="color:white">Creator:
+                    <b>{{ log_entry.creator.name | e }}</span></b>#{{ log_entry.creator.discriminator }}
+                    <span class='tooltiptext pre pre--inline'>{{ log_entry.creator.id }}</span>
                 </div>
             {% endif %}
 
