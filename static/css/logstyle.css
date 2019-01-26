@@ -203,6 +203,14 @@ body {
     }
 }
 
+
+@media (max-width: 800px) {
+    body {
+        font-size: 85%
+    }
+}
+
+
 .chatlog {
     max-width: 100%;
     background: #37393E;
