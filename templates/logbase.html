@@ -35,7 +35,7 @@
         <div class="info__metadata">
             <div class="info__guild-name"><span style='color:white'>Thread Logs</span> {% if log_entry.open %}
                 (Open){% else %}(Closed){% endif %}</div>
-            <div title="{{ log_entry.recipient.id }}" class="info__channel-topic tooltip"><span style="color:white">Recipient:
+            <div class="info__channel-topic tooltip"><span style="color:white">Recipient:
                 <b>{{ log_entry.recipient.name | e }}</b></span>#{{ log_entry.recipient.discriminator }}
                 <span class='tooltiptext pre pre--inline'>{{ log_entry.recipient.id }}</span>
             </div>
