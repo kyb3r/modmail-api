@@ -34,11 +34,6 @@
     font-weight: 700;
     src: url(https://discordapp.com/assets/8e12fb4f14d9c4592eb8ec9f22337b04.woff) format('woff');
   }
-  
-body {
-    font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
-}
 
 a {
     text-decoration: none;
@@ -100,6 +95,15 @@ img {
     line-height: 16px;
     -ms-flex-negative: 0;
     flex-shrink: 0
+}
+
+.button {
+    align-co: right;
+    background-color:#7289da; 
+    color: #ffffffb3;
+    border:transparent; 
+    border-radius: 2px; 
+    outline: transparent;
 }
 
 
@@ -185,19 +189,40 @@ img {
 
 /* === CHATLOG === */
 
+body {
+    background-color: #2F3135;
+    color: #ffffffb3;
+    font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 16px;
+}
+
+@media (min-width: 800px) {
+    body {
+        padding-left: 15%;
+        padding-right: 15%
+    }
+}
+
 .chatlog {
     max-width: 100%;
+    background: #37393E;
+    border-radius: 5px;
 }
 
 .chatlog__message-group {
     display: flex;
     margin: 0 10px;
     padding: 15px 0;
-    border-top: 1px solid;
+    border-bottom: 1px solid;
+    padding-left: 10px
 }
 
 .chatlog__message-group.internal {
     display: none;
+}
+
+.chatlog__message-group.close {
+    border-bottom: none
 }
 
 .chatlog__author-avatar-container {
@@ -390,11 +415,6 @@ img {
 .chatlog__reaction-count {
     font-size: .875em;
     vertical-align: middle;
-}
-
-body {
-    background-color: #36393e;
-    color: #ffffffb3;
 }
 
 a {

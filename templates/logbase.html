@@ -51,7 +51,7 @@
             <div class="info__channel-message-count">{{ log_entry.thread_messages | length }}
                 messages 
                 {% if log_entry.internal_messages %}
-                <button id='toggle' style='background-color:#7289da; color:white; border:transparent; outline: transparent' onclick="toggleInternalMessages()">Show Internal Messages</button>
+                <button id='toggle' class='button' onclick="toggleInternalMessages()">Show Internal Messages</button>
                 {% endif %}
             </div>
         </div>
@@ -107,7 +107,7 @@
             </div>
         {% endfor %}
         {% if not log_entry.open %}
-            <div class="chatlog__message-group">
+            <div class="chatlog__message-group close">
                 <div class="chatlog__author-avatar-container">
                     <img class="chatlog__author-avatar"
                          src="{{ log_entry.system_avatar_url }}" alt="avatar">
