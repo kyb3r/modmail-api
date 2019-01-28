@@ -252,7 +252,7 @@ async def log_new_instance(request):
     em = Embed(color=0x36393F)
     em.add_field(name='Guild Name', value=data['guild_name'])
     em.add_field(name='Member Count', value=data['member_count'])
-    em.add_field(name='Owner', value=f"<@{data['owner_id']}>")
+    em.add_field(name='Owner', value=f"<@{data.get('owner_id', 0)}>")
     selfhosted = data['selfhosted']
     em.set_footer(text=f"#{count} • {'selfhosted ' if selfhosted else ''}v{data['version']} • {data['bot_name']} ({data['bot_id']})", icon_url=data.get('avatar_url'))
     
