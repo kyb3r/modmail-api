@@ -331,7 +331,6 @@ async def regen_token(request, auth_info):
     new_data.pop('_id')
     return response.json(new_data)
 
-
 @api.get('/github/update')
 @auth_required()
 async def modmail_github_check(request, user):

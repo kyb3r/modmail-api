@@ -119,15 +119,7 @@ async def index(request):
 
 @app.get('/login')
 async def login(request):
-    if request['session'].get('logged_in'):
-        return response.redirect('http://' + app.url_for('dashboard.index'))
-
-    data = {
-        'client_id': config.GITHUB_CLIENT_ID,
-        'scope': 'public_repo'
-    }
-    url = config.GITHUB_OAUTH_URL + urlencode(data)
-    return response.redirect(url)
+    return render_template('template', title='Deprecated', message='The modmail api is being deprecated in the future, so you can no longer get an API token.')
 
 
 @app.get('/logout')
