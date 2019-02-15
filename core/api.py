@@ -245,6 +245,12 @@ async def get_modmail_info(request):
     }
     return response.json(data)
 
+@api.get('/oembed.json')
+async def oembed(request):
+    return response.json({
+        'author_name': 'Discord Modmail'
+    })
+
 async def log_new_instance(request):
     data = request.json
     count = await request.app.db.users.count_documents({})
