@@ -248,7 +248,9 @@ async def get_modmail_info(request):
 @api.get('/oembed.json')
 async def oembed(request):
     return response.json({
-        'author_name': 'Discord Modmail'
+        'provider_name': 'Effortlessly contact server moderators.'
+        'author_name': 'Discord Modmail',
+        'author_url': 'https://github.com/kyb3r/modmail'
     })
 
 async def log_new_instance(request):
