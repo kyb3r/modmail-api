@@ -20,6 +20,9 @@ api = Blueprint('api', host=host)
 
 CORS(api, automatic_options=True)
 
+def json_dumps(data):
+    return json.dumps(data, indent=4)
+
 
 @api.get('/')
 async def index(request):
@@ -38,7 +41,7 @@ async def index(request):
 
     resp = {'success': True, 'endpoints': list(endpoints), 'deprecated': list(deprecated)}
 
-    return response.json(resp)
+    return response.json(resp, dumps=json_dumps)
 
 
 @api.post('/webhooks/github')
@@ -71,7 +74,7 @@ async def get_modmail_info(request):
         'latest_version': version,
         'instances': await app.db.users.count_documents({})
     }
-    return response.json(data)
+    return response.json(data, dumps=json_dumps)
 
 @api.get('/oembed.json')
 async def oembed(request):
