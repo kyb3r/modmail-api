@@ -23,9 +23,6 @@ app.cfg = config
 Session(app, interface=InMemorySessionInterface(domain=config.DOMAIN))
 
 app.blueprint(core.api)
-app.blueprint(core.logs)
-app.blueprint(core.dashboard)
-
 app.blueprint(core.rd)
 
 app.static('/static', './static')
@@ -115,74 +112,6 @@ async def index(request):
         title='Modmail',
         message='DM to contact mods!'
     )
-
-
-@app.get('/login')
-async def login(request):
-    return render_template('template', title='Deprecated', message='The modmail api is being deprecated in the future, so you can no longer get an API token.')
-
-
-@app.get('/logout')
-@core.login_required()
-async def logout(request):
-    request['session'].clear()
-    return response.redirect(app.url_for('index'))
-
-
-@app.get('/callback')
-async def callback(request):
-    """Github Callback"""
-    try:    
-        code = request.raw_args['code']
-    except KeyError:
-        # in the case of invalid callback like someoone played with the url
-        return response.text('error: ' + request.raw_args['error'])                                    
-
-    params = {
-        'client_id': config.GITHUB_CLIENT_ID,
-        'client_secret': config.GITHUB_SECRET,
-        'code': code
-    }
-
-    resp = await app.session.post('https://github.com/login/oauth/access_token', params=params)
-    query_string = parse_qs(await resp.text())
-    github_access_token = query_string['access_token'][0]
-    user = await core.Github.login(app, github_access_token)
-    # app.loop.create_task(user.fork_repository())  # fork repo
-
-    # gotta check if a token exists first
-
-    document = await app.db.api.find_one({'user_id': user.id})
-    exists = document is not None
-
-    request['session']['logged_in'] = True
-
-    if exists:
-        request['session']['user'] = user
-        request['session']['token'] = document['token']
-        await app.db.api.update_one({'user_id': user.id}, {'$set': {'github_access_token': github_access_token}})
-        return response.redirect('http://'+app.url_for('dashboard.index'))
-
-    # Generate token
-    token = secrets.token_hex(15)
-    request['session']['user'] = user
-    request['session']['token'] = token 
-
-    await app.db.api.update_one(
-        {'user_id': user.id},
-        {'$set': {
-                'username': user.username,
-                'token': token,
-                'iat': datetime.datetime.utcnow(), 
-                'github_access_token': github_access_token,
-                'metadata': {},
-                'config': {},
-                'logs': [],
-                }
-        }, upsert=True)
-
-    return response.redirect('http://'+app.url_for('dashboard.index'))
-
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=1234)
