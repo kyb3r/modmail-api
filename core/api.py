@@ -52,10 +52,10 @@ async def upgrade(request):
     return response.json({'success': True})
 
 
-@api.get('/badges/instances.svg')
-async def badges_instances(request):
+@api.get('/badges/instances.{extension}')
+async def badges_instances(request, extension):
     instances = await request.app.db.users.count_documents({})
-    url = f"https://img.shields.io/badge/instances-{instances}-green.svg?style=for-the-badge"
+    url = f"https://img.shields.io/badge/instances-{instances}-green.{extension}?style=for-the-badge"
     async with request.app.session.get(url) as resp:
         file = await resp.read()
     return response.raw(file, content_type='image/svg+xml', headers={'cache-control': 'no-cache'})
@@ -68,12 +68,13 @@ async def get_modmail_info(request):
     resp = await app.session.get('https://raw.githubusercontent.com/kyb3r/modmail/master/bot.py')
     text = await resp.text()
 
-    version = text.splitlines()[24].split(' = ')[1].strip("'")
+    version = text.splitlines()[0].split(' = ')[1].strip('"')
 
     data = {
         'latest_version': version,
         'instances': await app.db.users.count_documents({})
     }
+    
     return response.json(data, dumps=json_dumps)
 
 @api.get('/oembed.json')
