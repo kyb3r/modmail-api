@@ -52,7 +52,7 @@ async def upgrade(request):
     return response.json({'success': True})
 
 
-@api.get('/badges/instances.{extension}')
+@api.get('/badges/instances.<extension>')
 async def badges_instances(request, extension):
     instances = await request.app.db.users.count_documents({})
     url = f"https://img.shields.io/badge/instances-{instances}-green.{extension}?style=for-the-badge"
@@ -123,7 +123,10 @@ async def update_modmail_data(request):
         })
 
     if exists is None:
-        await log_new_instance(request)
+        try:
+            await log_new_instance(request)
+        except:
+            pass
 
     await request.app.db.users.update_one(
         {'bot_id': data['bot_id']},
